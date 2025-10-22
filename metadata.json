@@ -1,0 +1,8 @@
+
+{
+  "name": "Event Ticket Management System",
+  "description": "A comprehensive frontend application for managing event tickets, including features for event creation, ticket purchasing, user role management, and a dark mode interface. Built with React, TypeScript, and Tailwind CSS.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

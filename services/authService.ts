@@ -1,0 +1,107 @@
+import axios from "axios";
+import { Role, User } from "../types";
+import { API_ENDPOINTS } from "./apiConfig";
+
+export interface LoginResponse {
+  user: User & { roleName?: string; role?: string };
+  accessToken: string;
+}
+
+export interface RegisterData {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+export interface RegisterResponse {
+  message: string;
+  email: string;
+}
+
+export interface ChangePasswordData {
+  userId: string;
+  currentPassword?: string;
+  newPassword: string;
+}
+
+interface ApiResponse<T> {
+  timestamp: string;
+  status: number;
+  message: string;
+  data: T;
+}
+
+export const normalizeRole = (roleStr?: string | null): Role => {
+  if (!roleStr) return Role.USER;
+  const upper = roleStr.toUpperCase();
+  return Object.values(Role).includes(upper as Role) ? (upper as Role) : Role.USER;
+};
+
+export const authService = {
+  async login(email: string, password: string): Promise<LoginResponse> {
+    try {
+      const response = await axios.post<ApiResponse<LoginResponse>>(
+        API_ENDPOINTS.LOGIN,
+        {
+          email,
+          password,
+        }
+      );
+      const rawData = response.data.data;
+      const accessToken = rawData.accessToken;
+      const role = normalizeRole(rawData.user.roleName);
+      const user: User = {
+        ...rawData.user,
+        role,
+      };
+      return { user, accessToken };
+    } catch (error: any) {
+      console.error("Login failed:", error);
+      throw new Error(
+        error.response?.data?.message ||
+          "Invalid email or password. Please try again."
+      );
+    }
+  },
+
+  async register(data: RegisterData): Promise<RegisterResponse> {
+    try {
+      const response = await axios.post<ApiResponse<RegisterResponse>>(
+        API_ENDPOINTS.REGISTER,
+        data
+      );
+
+      return response.data.data;
+    } catch (error: any) {
+      console.error("Registration failed:", error);
+      throw new Error(
+        error.response?.data?.message ||
+          "Registration failed. Please try again."
+      );
+    }
+  },
+
+  async changePassword({
+    userId,
+    currentPassword,
+    newPassword,
+  }: ChangePasswordData): Promise<{ success: boolean }> {
+    try {
+      const response = await axios.post<ApiResponse<{ success: boolean }>>(
+        `${API_ENDPOINTS.CHANGE_PASSWORD}/${userId}`,
+        {
+          currentPassword,
+          newPassword,
+        }
+      );
+
+      return response.data.data;
+    } catch (error: any) {
+      console.error("Password change failed:", error);
+      throw new Error(
+        error.response?.data?.message || "Unable to change password."
+      );
+    }
+  },
+};
