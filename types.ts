@@ -68,18 +68,36 @@ export interface Ticket {
 }
 
 export interface Order {
-  id: string;
-  total: number;
-  paymentMethod: string;
-  status: string;
+  orderId: string;
+  totalAmount: number;
+  paymentMethod?: string;
+  status?: string;
+  billNumber: string;
 }
 
-export interface Payment{
-  status: string;
-  orderId: string,
-  amount: number,
-  qrImage: string
+export interface QRpayload {
+  amount: number;
+  currency: string;
+  billNumber: string;
+  qr?: string;
 }
+
+export interface Payment {
+  billNumber: string;
+  currency: string;
+  amount: number;
+  qr?: string;
+}
+
+export interface KHQRResponse {
+  qr: string;
+  md5: string;
+}
+
+export interface ApiKHQRResponse {
+  data: KHQRResponse;
+}
+
 
 export interface PaginatedResponse<T> {
   items: T[];
