@@ -19,7 +19,7 @@ const ScanTicketPage = lazy(() => import('../features/tickets/ScanTicketPage'));
 const CartPage = lazy(()=>import('../features/cart/CartPage'))
 const CheckoutPage = lazy(()=> import('../features/orders/CheckoutPage'))
 const KHQRPaymentPage = lazy(()=>import('../features/payments/KHQRPaymentPage'))
-
+const PaymentSuccessPage = lazy(()=>import('../features/payments/PaymentSuccessPage'))
 const AppRoutes: React.FC = () => {
     return (
         <Routes>
@@ -35,6 +35,7 @@ const AppRoutes: React.FC = () => {
                     <Route path="/cart" element={<CartPage />} />
                     <Route path="/checkout" element={<CheckoutPage />} />
                     <Route path="/payment/khqr/:orderId" element={<KHQRPaymentPage />} />
+                    <Route path="/payment-success/:orderId" element={<PaymentSuccessPage />} />
 
                     <Route element={<RoleBasedRoute allowedRoles={[Role.ADMIN, Role.ORGANIZER]} />}>
                         <Route path="/manage-events" element={<EventManagementPage />} />

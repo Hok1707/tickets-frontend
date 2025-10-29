@@ -7,8 +7,8 @@ import { authService } from '@/services/authService';
 import { TicketIcon, AtSymbolIcon, LockClosedIcon } from '@heroicons/react/24/solid';
 
 const LoginPage: React.FC = () => {
-    const [email, setEmail] = useState('hengkimhok07@gmail.com');
-    const [password, setPassword] = useState('admin@007');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const login = useAuthStore((state) => state.login);
     const navigate = useNavigate();

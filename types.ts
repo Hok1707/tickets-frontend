@@ -98,6 +98,27 @@ export interface ApiKHQRResponse {
   data: KHQRResponse;
 }
 
+export interface BakongCheckTxnResponse {
+  responseCode: number;
+  responseMessage: string;
+  data: BakongTransactionData | null;
+}
+
+export interface BakongTransactionData {
+  hash: string;
+  fromAccountId?: string;
+  amount: number;
+  description?: string;
+  currency: string;
+  toAccountId: string
+  createdDateMs?: number;
+  acknowledgedDateMs?:number
+}
+
+export interface BakongUpdateOrderStatusPayload {
+  status: string;
+  md5Hash: string;
+}
 
 export interface PaginatedResponse<T> {
   items: T[];

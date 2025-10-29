@@ -1,13 +1,21 @@
-import { ApiResponse, Payment,QRpayload,ApiKHQRResponse } from "@/types";
+import {
+  ApiResponse,
+  Payment,
+  QRpayload,
+  ApiKHQRResponse,
+  BakongCheckTxnResponse,
+  BakongUpdateOrderStatusPayload,
+} from "@/types";
 import { API_ENDPOINTS, apiClient } from "./apiConfig";
+import axios from "axios";
 
 export const paymentService = {
   generateKHQR: async (
     orderId: string,
     qrPayload: QRpayload
   ): Promise<{
-    data: ApiKHQRResponse;  
-}> => {
+    data: ApiKHQRResponse;
+  }> => {
     const response = await apiClient.post(
       `${API_ENDPOINTS.PAYMENT}/bakong/qr/${orderId}`,
       qrPayload
@@ -15,10 +23,17 @@ export const paymentService = {
     return response;
   },
 
-  paymentStatus: async (orderId: string): Promise<ApiResponse<Payment>> => {
-    const { data } = await apiClient.get<ApiResponse<Payment>>(
-      `${API_ENDPOINTS.PAYMENT}/status/${orderId}`
+  checkTxnByMd5: async (md5: string): Promise<BakongCheckTxnResponse> => {
+    const res = await axios.post(`${API_ENDPOINTS.PAYMENT}/bakong/check-md5`, {
+      md5,
+    });
+    return res.data;
+  },
+  updateOrderStatus: async (orderId: string,updatePayload:BakongUpdateOrderStatusPayload): Promise<string> => {
+    const res = await axios.put<{ message: string }>(
+      `${API_ENDPOINTS.ORDER}/${orderId}/status`,
+      updatePayload
     );
-    return data;
+    return res.data.message;
   },
 };
