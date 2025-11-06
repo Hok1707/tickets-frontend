@@ -10,7 +10,6 @@ import {
     ShieldCheckIcon, LockClosedIcon, EyeIcon, EyeSlashIcon,
     PaintBrushIcon, SunIcon, MoonIcon
 } from '@heroicons/react/24/outline';
-import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
 
 const ProfileSettings: React.FC = () => {
     const { user } = useAuth();
@@ -230,8 +229,8 @@ const SettingsPage: React.FC = () => {
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md text-left transition-colors duration-200 ${activeTab === tab.id
-                                        ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300'
-                                        : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700/50'
+                                    ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300'
+                                    : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700/50'
                                     }`}
                             >
                                 <tab.icon className="h-5 w-5 flex-shrink-0" />

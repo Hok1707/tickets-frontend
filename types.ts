@@ -62,9 +62,10 @@ export interface Ticket {
   eventId: string;
   userId: string;
   ticketTypeId: string;
-  purchaseDate: string;
-  qrCodeValue: string;
+  value: string;
   status: TicketStatus;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Order {

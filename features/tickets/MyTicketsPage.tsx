@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import type { Ticket, Event, TicketType, User } from '../../types';
+import type { Ticket, Events, TicketType, User } from '../../types';
 import { EventStatus, Role, TicketStatus } from '../../types';
 import { ticketService } from '../../services/ticketService';
 import { QRCodeSVG as QRCode } from 'qrcode.react';
@@ -14,7 +14,7 @@ import ScanModal from './components/ScanModal';
 
 type DetailedTicket = {
     ticket: Ticket;
-    event: Event;
+    event: Events;
     ticketType: TicketType;
     organizer: User;
 }
@@ -74,35 +74,31 @@ const TicketCard: React.FC<{
             <div className="flex flex-col md:flex-row">
                 <div className="p-6 md:w-2/3 order-2 md:order-1 relative">
                     <TicketStatusBadge status={ticket.status} eventStatus={event.status} />
-                    <p className="text-sm font-semibold text-primary-500 uppercase">{event.location}</p>
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{event.title}</h3>
+                    <p className="text-sm font-semibold text-primary-500 uppercase">{event.venue}</p>
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{event.name}</h3>
                     <p className="text-lg font-semibold text-gray-700 dark:text-gray-300 mt-2">{ticketType.name}</p>
                     <p className="text-gray-600 dark:text-gray-400 mt-2 text-sm">{truncate(event.description, 100)}</p>
 
                     <div className="mt-4 flex items-center text-gray-600 dark:text-gray-400">
                         <CalendarIcon className="h-5 w-5 mr-2" />
-                        <span>{formatDate(event.startDate)}</span>
+                        <span>{formatDate(event.start)}</span>
                     </div>
                     <div className="mt-2 flex items-center text-gray-600 dark:text-gray-400">
                         <MapPinIcon className="h-5 w-5 mr-2" />
-                        <span>{event.location}</span>
-                    </div>
-                    <div className="mt-2 flex items-center text-gray-600 dark:text-gray-400">
-                        <TicketOutlineIcon className="h-5 w-5 mr-2" />
-                        <span>{ticketType.validity}</span>
+                        <span>{event.venue}</span>
                     </div>
                     <div className="mt-2 flex items-center text-gray-600 dark:text-gray-400">
                         <UserCircleIcon className="h-5 w-5 mr-2" />
-                        <span>Organized by: {organizer.name}</span>
+                        <span>Organized by: {organizer.username}</span>
                     </div>
-                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-4">Purchased on: {formatDate(ticket.purchaseDate)}</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-4">Purchased on: {formatDate(ticket.createdAt)}</p>
                     
                     <div className="mt-6">
                         <button
                             onClick={onToggleExpand}
                             aria-expanded={isExpanded}
                             aria-controls={detailsId}
-                            aria-label={`${isExpanded ? 'Collapse ticket details for' : 'Expand ticket details for'} ${event.title}`}
+                            aria-label={`${isExpanded ? 'Collapse ticket details for' : 'Expand ticket details for'} ${event.name}`}
                             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/50 rounded-md focus:outline-none"
                         >
                             {isExpanded ? 'Show Less' : 'View Details'}
@@ -119,8 +115,8 @@ const TicketCard: React.FC<{
                            }
                         </div>
                     )}
-                    <QRCode value={ticket.qrCodeValue} size={160} bgColor="transparent" fgColor={document.documentElement.classList.contains('dark') ? '#FFFFFF' : '#000000'} />
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-4 break-all">{ticket.qrCodeValue}</p>
+                    <QRCode value={ticket.value} size={160} bgColor="transparent" fgColor={document.documentElement.classList.contains('dark') ? '#FFFFFF' : '#000000'} />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-4 break-all">{ticket.value}</p>
                 </div>
             </div>
              <div 

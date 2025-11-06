@@ -1,17 +1,14 @@
-import axios from "axios";
 import { API_ENDPOINTS, apiClient } from "./apiConfig";
 import type { Ticket, TicketType, Events, User, Attendee, RedeemTicketResponse } from "../types";
 
 export const ticketService = {
-  // 🧾 Get all tickets belonging to a user
   getMyTickets: async (userId: string): Promise<
     { ticket: Ticket; event: Events; ticketType: TicketType; organizer: User }[]
   > => {
     const res = await apiClient.get(`${API_ENDPOINTS.TICKET}/user/${userId}`);
-    return res.data;
+    return res.data.data;
   },
 
-  // 🛒 Purchase tickets
   purchaseTickets: async (
     userId: string,
     eventId: string,

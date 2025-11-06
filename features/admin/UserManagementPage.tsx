@@ -179,7 +179,7 @@ const UserManagementPage: React.FC = () => {
                     </label>
                     <select
                       id={`role-select-${user.id}`}
-                      value={user.roleName}
+                      value={user.role}
                       onChange={(e) =>
                         handleRoleChangeRequest(user.id, e.target.value as Role, user.username)
                       }

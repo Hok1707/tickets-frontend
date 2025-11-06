@@ -105,13 +105,14 @@ const KHQRPaymentPage: React.FC = () => {
         const txnCode = res?.responseCode;
         setCode(txnCode);
         setMessage(res.responseMessage);
-
+        console.log('res = ', res);
         if (txnCode === 0) {
           toast.success("✅ Payment Success!");
           await paymentService.updateOrderStatus(orderId!, {
             status: "PAID",
             md5Hash: md5
           });
+          console.log(`md5, `, md5);
           clearPolling();
           navigate(`/payment-success/${orderId}`);
         } else if (txnCode === 1) {

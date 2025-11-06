@@ -9,7 +9,6 @@ const ScanTicketPage: React.FC = () => {
 
     const handleClose = () => {
         setIsModalOpen(false);
-        // Navigate back to dashboard after closing modal
         navigate('/'); 
     };
 
