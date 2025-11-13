@@ -45,7 +45,7 @@ const CheckoutPage: React.FC = () => {
         items: cart.map(item => ({
           eventId: item.event.id,
           eventName: item.event.name,
-          ticketTypeId:item.ticketType.id,
+          ticketTypeId: item.ticketType.id,
           ticketName: item.ticketType.name,
           quantity: item.quantity,
           price: item.ticketType.price
@@ -99,12 +99,7 @@ const CheckoutPage: React.FC = () => {
           active={paymentMethod === "KHQR"}
           onClick={() => setPaymentMethod("KHQR")}
         />
-        <PaymentOption
-          label="Cash on Hand"
-          icon={<BanknotesIcon className="w-6 h-6" />}
-          active={paymentMethod === "CASH"}
-          onClick={() => setPaymentMethod("CASH")}
-        />
+        
       </div>
 
       <button

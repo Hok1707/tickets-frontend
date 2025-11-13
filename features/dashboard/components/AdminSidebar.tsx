@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import TopEventsCard, { TopEvent } from './TopEventsCard';
 import { QrCodeIcon, XMarkIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
-import type { Ticket, Event, TicketType, User } from '../../../types';
+import type { Ticket, Events, TicketType, User } from '../../../types';
 import { ticketService } from '../../../services/ticketService';
 
 
 type VerificationResult = {
     status: 'valid' | 'invalid';
     message?: string;
-    data?: { ticket: Ticket; event: Event; ticketType: TicketType; user: User };
+    data?: { ticket: Ticket; event: Events; ticketType: TicketType; user: User };
 } | null;
 
 
@@ -78,9 +78,9 @@ const VerificationModal: React.FC<{
                         <CheckCircleIcon className="mx-auto h-16 w-16 text-green-500" />
                         <h3 className="text-2xl font-bold text-green-600 dark:text-green-400 mt-2">VALID TICKET</h3>
                         <div className="text-left bg-gray-100 dark:bg-gray-700 p-4 rounded-lg mt-4 space-y-2">
-                            <p><strong>Event:</strong> {result.data?.event.title}</p>
+                            <p><strong>Event:</strong> {result.data?.event.name}</p>
                             <p><strong>Ticket:</strong> {result.data?.ticketType.name}</p>
-                            <p><strong>Attendee:</strong> {result.data?.user.name}</p>
+                            <p><strong>Attendee:</strong> {result.data?.user.username}</p>
                         </div>
                          <button onClick={resetScanner} className="mt-6 w-full py-3 px-4 text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700">Scan Another Ticket</button>
                     </div>

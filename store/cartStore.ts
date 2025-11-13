@@ -27,13 +27,11 @@ export const useCartStore = create<CartState>((set, get) => ({
   setUserId: (id) => {
     const { userId } = get();
 
-    // Logout
     if (!id) {
       set({ userId: null, cart: [] });
       return;
     }
 
-    // Switch user
     if (id !== userId) {
       const stored = localStorage.getItem(`cart_${id}`);
       const cart = stored ? JSON.parse(stored) : [];

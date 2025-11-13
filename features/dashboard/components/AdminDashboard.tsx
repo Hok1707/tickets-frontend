@@ -23,7 +23,6 @@ const AdminDashboard: React.FC = () => {
 
     useEffect(() => {
         fetchDashboardData().catch(() => toast.error('Failed to load dashboard data'));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dateRange]);
 
     if (isLoading) {
@@ -96,7 +95,6 @@ const AdminDashboard: React.FC = () => {
                     />
                 </div>
 
-                {/* Financial Overview */}
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
                     <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                         <div>
@@ -140,7 +138,6 @@ const AdminDashboard: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Performance Chart */}
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
                     <div className="flex items-center justify-between mb-6">
                         <div>
@@ -162,7 +159,6 @@ const AdminDashboard: React.FC = () => {
                     )}
                 </div>
 
-                {/* Quick Actions */}
                 <div>
                     <div className="flex items-center justify-between mb-4">
                         <div>
@@ -218,7 +214,6 @@ const AdminDashboard: React.FC = () => {
                     </div>
                 </div>
 
-                {/* System Status */}
                 <div className="bg-gradient-to-r from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 border border-primary-200 dark:border-primary-700 rounded-lg p-6">
                     <div className="flex items-start gap-4">
                         <div className="bg-primary-500 p-3 rounded-lg">

@@ -1,59 +1,55 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { paymentService } from "@/services/paymentService";
 import { orderService } from "@/services/orderService";
 import QRCode from "react-qr-code";
 import toast from "react-hot-toast";
 import { BakongCheckTxnResponse, QRpayload } from "@/types";
+import { useCartStore } from "@/store/cartStore";
+import { ticketService } from "@/services/ticketService";
+import { useAuth } from "@/hooks/useAuth";
 
-const QR_EXPIRE_TIME = 300;
+const QR_EXPIRE_TIME = 120;
 
 const KHQRPaymentPage: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();
+  const { clearCart } = useCartStore();
+  const { user } = useAuth();
 
   const [qrData, setQrData] = useState<string | null>(null);
   const [billNumber, setBillNumber] = useState<string | null>(null);
   const [amount, setAmount] = useState<number | null>(null);
   const [md5Hash, setMd5Hash] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [expired, setExpired] = useState<boolean>(false);
+  const [timer, setTimer] = useState<number>(QR_EXPIRE_TIME);
   const [currency] = useState<string>("USD");
-  const [timer, setTimer] = useState(QR_EXPIRE_TIME);
-  const [expired, setExpired] = useState(false);
-  const [code, setCode] = useState<number | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
+  const [txnStatus, setTxnStatus] = useState<string>("PENDING");
 
-
-  const initRef = useRef(false);
-  const pollRef = useRef<number | null>(null);
-  const countdownRef = useRef<number | null>(null);
+  const pollRef = useRef<NodeJS.Timeout | null>(null);
+  const countdownRef = useRef<NodeJS.Timeout | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
 
   useEffect(() => {
-    if (initRef.current) return;
-    initRef.current = true;
+    if (!orderId) {
+      toast.error("Invalid Order ID");
+      navigate("/checkout");
+      return;
+    }
 
     const init = async () => {
-      if (!orderId) {
-        toast.error("Invalid Order ID");
-        navigate("/checkout");
-        return;
-      }
-
       try {
-        const orderRes = await orderService.getOrderId(orderId);
-        const order = orderRes.data;
-
+        const { data: order } = await orderService.getOrderId(orderId);
         setBillNumber(order.billNumber);
         setAmount(order.totalAmount);
-
-        await generateQRCode(orderId, {
+        await generateQRCode({
           amount: order.totalAmount,
           currency,
           billNumber: order.billNumber,
         });
       } catch (err) {
-        console.error(err);
+        console.error("Init error:", err);
         toast.error("Unable to initialize payment");
         navigate("/checkout");
       } finally {
@@ -64,60 +60,78 @@ const KHQRPaymentPage: React.FC = () => {
     init();
 
     return () => {
-      clearPolling();
-      clearCountdown();
+      stopPolling();
+      stopCountdown();
     };
   }, [orderId, navigate, currency]);
 
-  const generateQRCode = async (id: string, payload: QRpayload) => {
-    setLoading(true);
-    setExpired(false);
-    setTimer(QR_EXPIRE_TIME);
-    setCode(1);
-    try {
-      const qrRes = await paymentService.generateKHQR(id, payload);
-      const qrDataRes = qrRes?.data?.data;
-      if (!qrDataRes?.qr) {
-        toast.error("Failed to generate KHQR");
-        navigate("/checkout");
-        return;
-      }
-      console.log('res qr ', qrDataRes);
-      setQrData(qrDataRes.qr);
-      setMd5Hash(qrDataRes.md5);
-      startCountdown();
-      startPolling(qrDataRes.md5);
-    } catch (err) {
-      console.error("generateKHQR error:", err);
-      toast.error("Failed to generate QR. Try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const startPolling = (md5?: string | null) => {
-    clearPolling();
-    if (!md5) return;
-    pollRef.current = window.setInterval(async () => {
+  const generateQRCode = useCallback(
+    async (payload: QRpayload) => {
       try {
-        const res: BakongCheckTxnResponse =
-          await paymentService.checkTxnByMd5(md5);
-        const txnCode = res?.responseCode;
-        setCode(txnCode);
-        setMessage(res.responseMessage);
-        console.log('res = ', res);
-        if (txnCode === 0) {
-          toast.success("✅ Payment Success!");
-          await paymentService.updateOrderStatus(orderId!, {
-            status: "PAID",
-            md5Hash: md5
-          });
-          console.log(`md5, `, md5);
-          clearPolling();
-          navigate(`/payment-success/${orderId}`);
-        } else if (txnCode === 1) {
-          toast.error(`Payment ${message}. Please try again.`);
-          clearPolling();
+        setLoading(true);
+        setExpired(false);
+        setTimer(QR_EXPIRE_TIME);
+        setTxnStatus("PENDING");
+
+        const { data } = await paymentService.generateKHQR(orderId!, payload);
+        const qr = data?.data?.qr;
+        const md5 = data?.data?.md5;
+
+        if (!qr || !md5) {
+          toast.error("Failed to generate KHQR");
+          navigate("/checkout");
+          return;
+        }
+        setQrData(qr);
+        setMd5Hash(md5);
+        startCountdown();
+        startPolling(md5);
+      } catch (err) {
+        console.error("generateKHQR error:", err);
+        toast.error("Failed to generate QR. Try again.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [orderId, navigate]
+  );
+
+  const startPolling = (md5: string) => {
+    stopPolling();
+    pollRef.current = setInterval(async () => {
+      try {
+        const res: BakongCheckTxnResponse = await paymentService.checkTxnByMd5(md5);
+        setTxnStatus(res.status ?? "PENDING");
+        switch (res.status) {
+          case "SUCCESS":
+            stopPolling();
+            stopCountdown();
+            try {
+              await paymentService.updateOrderStatus(orderId, { status: "PAID", md5Hash: md5 });
+              toast.success("✅ Payment Success!");
+              clearCart();
+              await ticketService.purchaseTickets(orderId!, user!.id);
+              navigate(`/payment-success/${orderId}`);
+            } catch (err) {
+              console.error("Order status update failed:", err);
+              toast.error("Payment succeeded but failed to update order status. Please contact support.");
+            }
+            break;
+          case "PENDING":
+            console.log("Waiting for Bakong confirmation...");
+            break;
+          case "FAILED":
+            toast.error(`Payment failed: ${res.responseMessage}`);
+            stopPolling();
+            stopCountdown();
+            break;
+
+          case "ERROR":
+          default:
+            toast.error(`Payment error: ${res.responseMessage}`);
+            stopPolling();
+            stopCountdown();
+            break;
         }
       } catch (err) {
         console.warn("Polling failed:", err);
@@ -125,25 +139,23 @@ const KHQRPaymentPage: React.FC = () => {
     }, 10000);
   };
 
-  const clearPolling = () => {
-    if (pollRef.current !== null) {
-      clearInterval(pollRef.current);
-      pollRef.current = null;
-    }
+  const stopPolling = () => {
+    if (pollRef.current) clearInterval(pollRef.current);
+    pollRef.current = null;
   };
 
   const startCountdown = () => {
-    clearCountdown();
+    stopCountdown();
     setTimer(QR_EXPIRE_TIME);
     setExpired(false);
 
-    countdownRef.current = window.setInterval(() => {
+    countdownRef.current = setInterval(() => {
       setTimer((prev) => {
         if (prev <= 1) {
-          clearCountdown();
+          stopCountdown();
+          stopPolling();
           setExpired(true);
-          clearPolling();
-          toast.error("QR expired. You can regenerate a new QR.");
+          toast.error("QR expired. Please regenerate a new QR.");
           return 0;
         }
         return prev - 1;
@@ -151,42 +163,27 @@ const KHQRPaymentPage: React.FC = () => {
     }, 1000);
   };
 
-  const clearCountdown = () => {
-    if (countdownRef.current !== null) {
-      clearInterval(countdownRef.current);
-      countdownRef.current = null;
-    }
+  const stopCountdown = () => {
+    if (countdownRef.current) clearInterval(countdownRef.current);
+    countdownRef.current = null;
   };
 
-  useEffect(() => {
-    return () => {
-      clearPolling();
-      clearCountdown();
-    };
-  }, []);
-
   const formatTime = (seconds: number) =>
-    `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(
-      seconds % 60
-    ).padStart(2, "0")}`;
+    `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
 
   const handleRegenerate = async () => {
     if (!orderId || !amount || !billNumber) {
       toast.error("Missing order data");
       return;
     }
-    await generateQRCode(orderId, {
-      amount,
-      currency,
-      billNumber,
-    });
+    await generateQRCode({ amount, currency, billNumber });
   };
 
   const handleCopy = async () => {
     if (!qrData) return toast.error("No QR to copy");
     try {
       await navigator.clipboard.writeText(qrData);
-      toast.success("QR payload copied to clipboard");
+      toast.success("QR payload copied");
     } catch {
       toast.error("Copy failed");
     }
@@ -197,7 +194,6 @@ const KHQRPaymentPage: React.FC = () => {
     const svg = svgRef.current;
     const serializer = new XMLSerializer();
     const source = serializer.serializeToString(svg);
-
     const svgWithNS =
       source.indexOf("http://www.w3.org/2000/svg") === -1
         ? source.replace("<svg", '<svg xmlns="http://www.w3.org/2000/svg"')
@@ -210,53 +206,39 @@ const KHQRPaymentPage: React.FC = () => {
     img.crossOrigin = "anonymous";
     img.onload = () => {
       const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return toast.error("Canvas context missing");
       const size = 480;
       canvas.width = size;
       canvas.height = size;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        URL.revokeObjectURL(url);
-        toast.error("Failed to prepare image");
-        return;
-      }
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, size, size);
       ctx.drawImage(img, 0, 0, size, size);
       canvas.toBlob((blob) => {
-        if (!blob) {
-          toast.error("Export failed");
-          URL.revokeObjectURL(url);
-          return;
-        }
+        if (!blob) return toast.error("Export failed");
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
         link.download = fileName;
-        document.body.appendChild(link);
         link.click();
         link.remove();
-        URL.revokeObjectURL(url);
         toast.success("QR downloaded");
       }, "image/png");
     };
-    img.onerror = () => {
-      URL.revokeObjectURL(url);
-      toast.error("Failed to convert SVG");
-    };
+    img.onerror = () => toast.error("Failed to convert SVG");
     img.src = url;
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white px-4">
       <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 max-w-md w-full text-center">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex justify-between mb-4">
           <button
             onClick={() => navigate(-1)}
             className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-300"
-            aria-label="Go back"
           >
             ← Back
           </button>
-          <span className="text-xs text-gray-400">{status ? `Status: ${status}` : "Waiting"}</span>
+          <span className="text-xs text-gray-400">{txnStatus}</span>
         </div>
 
         <h2 className="text-2xl font-semibold mb-2">Scan to Pay</h2>
@@ -268,12 +250,12 @@ const KHQRPaymentPage: React.FC = () => {
           {loading ? (
             <div className="w-[240px] h-[240px] bg-gray-200 dark:bg-gray-700 animate-pulse rounded-xl" />
           ) : qrData ? (
-            <div ref={(el) => {
-              if (el) {
-                const svg = el.querySelector("svg");
+            <div
+              ref={(el) => {
+                const svg = el?.querySelector("svg");
                 if (svg) svgRef.current = svg as SVGSVGElement;
-              }
-            }}>
+              }}
+            >
               <QRCode value={qrData} size={240} />
             </div>
           ) : (
@@ -296,16 +278,17 @@ const KHQRPaymentPage: React.FC = () => {
         )}
 
         <div className="mt-3 w-full">
-          <div className="flex items-center justify-between mb-1">
-            <p className="text-sm font-medium text-orange-500">
-              QR will expire in:
-              <span className="ml-2 font-mono">{formatTime(timer)}</span>
+          <div className="flex justify-between mb-1 text-sm">
+            <p className="text-orange-500">
+              Expires in: <span className="font-mono">{formatTime(timer)}</span>
             </p>
-            <p className="text-xs text-gray-400">{expired ? "Expired" : `${Math.round((timer / QR_EXPIRE_TIME) * 100)}%`}</p>
+            <p className="text-xs text-gray-400">
+              {expired ? "Expired" : `${Math.round((timer / QR_EXPIRE_TIME) * 100)}%`}
+            </p>
           </div>
           <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
             <div
-              className={`h-full bg-gradient-to-r from-orange-400 to-orange-600 transition-all`}
+              className="h-full bg-gradient-to-r from-orange-400 to-orange-600 transition-all"
               style={{ width: `${(timer / QR_EXPIRE_TIME) * 100}%` }}
             />
           </div>
@@ -315,10 +298,10 @@ const KHQRPaymentPage: React.FC = () => {
           Waiting for payment confirmation…
         </p>
 
-        <div className="flex items-center justify-center space-x-2 mt-3">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
-          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-          <div className="w-2 h-2 bg-green-300 rounded-full animate-pulse"></div>
+        <div className="flex justify-center space-x-2 mt-3">
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-ping" />
+          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+          <div className="w-2 h-2 bg-green-300 rounded-full animate-pulse" />
         </div>
 
         <div className="mt-5 grid grid-cols-2 gap-3">
@@ -348,9 +331,7 @@ const KHQRPaymentPage: React.FC = () => {
         </div>
       </div>
 
-      <p className="text-xs text-gray-400 mt-2">
-        Secure Payment powered by Bakong
-      </p>
+      <p className="text-xs text-gray-400 mt-2">Secure Payment powered by Bakong</p>
     </div>
   );
 };

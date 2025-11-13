@@ -30,7 +30,7 @@ export const paymentService = {
     return res.data;
   },
   updateOrderStatus: async (orderId: string, updatePayload: BakongUpdateOrderStatusPayload): Promise<string> => {
-    const res = await axios.put<{ message: string }>(
+    const res = await apiClient.put<{ message: string }>(
       `${API_ENDPOINTS.ORDER}/${orderId}/status`,
       updatePayload
     );

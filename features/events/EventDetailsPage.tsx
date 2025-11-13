@@ -40,7 +40,6 @@ const EventDetailsPage: React.FC = () => {
             setIsLoading(true);
             try {
                 const res: ApiResponse<Events> = await eventService.getEventById(eventId);
-                console.log(`res ${res}`);
                 const data = res.data;
                 if (data) {
                     setEvent({

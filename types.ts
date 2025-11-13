@@ -68,6 +68,42 @@ export interface Ticket {
   updatedAt: string;
 }
 
+export interface TicketUserResponse {
+  id: string;
+  ticketType: string;
+  purchaser: PurchaserResponse;
+  event: EventTicketResponse;
+  qrCode: QrCodeResponse;
+  status: string;
+  price: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PurchaserResponse {
+  id: string;
+  username: string;
+  email: string;
+}
+
+export interface EventTicketResponse {
+  id: string;
+  name: string;
+  description: string;
+  status: string;
+  organizerName: string;
+  start: string;
+  end: string;
+  imageUrl: string;
+  venue: string;
+}
+
+export interface QrCodeResponse {
+  id: string;
+  value: string;
+  status: string;
+}
+
 export interface Order {
   orderId: string;
   totalAmount: number;
@@ -102,6 +138,8 @@ export interface ApiKHQRResponse {
 export interface BakongCheckTxnResponse {
   responseCode: number;
   responseMessage: string;
+  status: string;
+  errorCode?: number;
   data: BakongTransactionData | null;
 }
 
@@ -111,9 +149,9 @@ export interface BakongTransactionData {
   amount: number;
   description?: string;
   currency: string;
-  toAccountId: string
+  toAccountId: string;
   createdDateMs?: number;
-  acknowledgedDateMs?:number
+  acknowledgedDateMs?: number;
 }
 
 export interface BakongUpdateOrderStatusPayload {
