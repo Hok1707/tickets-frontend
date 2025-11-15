@@ -1,227 +1,280 @@
-export enum Role {
-  ADMIN = "ADMIN",
-  ORGANIZER = "ORGANIZER",
-  STAFF = "STAFF",
-  USER = "USER",
-}
+// export enum Role {
+//   ADMIN = "ADMIN",
+//   ORGANIZER = "ORGANIZER",
+//   STAFF = "STAFF",
+//   USER = "USER",
+// }
 
-export enum AccountStatus {
-  ACTIVE = "ACTIVE",
-  SUSPENDED = "SUSPENDED",
-  BLOCKED = "BLOCKED",
-}
-export enum EventStatus {
-  DRAFT = "DRAFT",
-  PUBLISHED = "PUBLISHED",
-  CANCELLED = "CANCELLED",
-  COMPLETED = "COMPLETED",
-}
+// export enum AccountStatus {
+//   ACTIVE = "ACTIVE",
+//   SUSPENDED = "SUSPENDED",
+//   BLOCKED = "BLOCKED",
+// }
+// export enum EventStatus {
+//   DRAFT = "DRAFT",
+//   PUBLISHED = "PUBLISHED",
+//   CANCELLED = "CANCELLED",
+//   COMPLETED = "COMPLETED",
+// }
 
-export enum TicketStatus {
-  VALID = "valid",
-  USED = "used",
-}
+// export enum TicketStatus {
+//   VALID = "valid",
+//   USED = "used",
+// }
 
-export interface User {
-  id: string | null;
-  username: string;
-  email: string;
-  phoneNumber?: string | null;
-  role: Role;
-  status: AccountStatus;
-  createdAt: string;
-  updatedAt: string;
-}
+// export interface LoginResponse {
+//   user: User & { roleName?: string; role?: string };
+//   accessToken: string;
+// }
 
-export interface TicketType {
-  id?: string;
-  name: string;
-  price: number;
-  description: string;
-  totalAvailable: number;
-}
+// export interface RegisterData {
+//   username: string;
+//   email: string;
+//   password: string;
+//   confirmPassword: string;
+// }
 
-export interface Events {
-  id: string;
-  name: string;
-  description: string;
-  venue: string;
-  start: string;
-  end: string;
-  imageUrl: string;
-  organizerId: string;
-  capacity: number;
-  status: EventStatus;
-  ticketTypes: TicketType[];
-  expenses?: number;
-  category?: string;
-}
+// export interface RegisterResponse {
+//   message: string;
+//   email: string;
+// }
 
-export interface Ticket {
-  id: string;
-  eventId: string;
-  userId: string;
-  ticketTypeId: string;
-  value: string;
-  status: TicketStatus;
-  createdAt: string;
-  updatedAt: string;
-}
+// export interface ChangePasswordData {
+//   userId: string;
+//   currentPassword?: string;
+//   newPassword: string;
+// }
 
-export interface TicketUserResponse {
-  id: string;
-  ticketType: string;
-  purchaser: PurchaserResponse;
-  event: EventTicketResponse;
-  qrCode: QrCodeResponse;
-  status: string;
-  price: number;
-  createdAt: string;
-  updatedAt: string;
-}
+// export interface User {
+//   id: string | null;
+//   username: string;
+//   email: string;
+//   phoneNumber?: string | null;
+//   role: Role;
+//   status: AccountStatus;
+//   createdAt: string;
+//   updatedAt: string;
+// }
 
-export interface PurchaserResponse {
-  id: string;
-  username: string;
-  email: string;
-}
+// export interface TicketType {
+//   id?: string;
+//   name: string;
+//   price: number;
+//   description: string;
+//   totalAvailable: number;
+// }
 
-export interface EventTicketResponse {
-  id: string;
-  name: string;
-  description: string;
-  status: string;
-  organizerName: string;
-  start: string;
-  end: string;
-  imageUrl: string;
-  venue: string;
-}
+// export interface Events {
+//   id: string;
+//   name: string;
+//   description: string;
+//   venue: string;
+//   start: string;
+//   end: string;
+//   imageUrl: string;
+//   organizerId: string;
+//   capacity: number;
+//   status: EventStatus;
+//   ticketTypes: TicketType[];
+//   expenses?: number;
+//   category?: string;
+// }
 
-export interface QrCodeResponse {
-  id: string;
-  value: string;
-  status: string;
-}
+// export interface Ticket {
+//   id: string;
+//   eventId: string;
+//   userId: string;
+//   ticketTypeId: string;
+//   value: string;
+//   status: TicketStatus;
+//   createdAt: string;
+//   updatedAt: string;
+// }
 
-export interface Order {
-  orderId: string;
-  totalAmount: number;
-  paymentMethod?: string;
-  status?: string;
-  billNumber: string;
-}
+// export interface TicketUserResponse {
+//   id: string;
+//   ticketType: string;
+//   purchaser: PurchaserResponse;
+//   event: EventTicketResponse;
+//   qrCode: QrCodeResponse;
+//   status: string;
+//   price: number;
+//   createdAt: string;
+//   updatedAt: string;
+// }
 
-export interface QRpayload {
-  amount: number;
-  currency: string;
-  billNumber: string;
-  qr?: string;
-}
+// export interface PurchaserResponse {
+//   id: string;
+//   username: string;
+//   email: string;
+// }
 
-export interface Payment {
-  billNumber: string;
-  currency: string;
-  amount: number;
-  qr?: string;
-}
+// export interface EventTicketResponse {
+//   id: string;
+//   name: string;
+//   description: string;
+//   status: string;
+//   organizerName: string;
+//   start: string;
+//   end: string;
+//   imageUrl: string;
+//   venue: string;
+// }
 
-export interface KHQRResponse {
-  qr: string;
-  md5: string;
-}
+// export interface CartItem {
+//   event: Events;
+//   ticketType: TicketType;
+//   quantity: number;
+// }
 
-export interface ApiKHQRResponse {
-  data: KHQRResponse;
-}
+// export interface QrCodeResponse {
+//   id: string;
+//   value: string;
+//   status: string;
+// }
 
-export interface BakongCheckTxnResponse {
-  responseCode: number;
-  responseMessage: string;
-  status: string;
-  errorCode?: number;
-  data: BakongTransactionData | null;
-}
+// export interface Order {
+//   orderId: string;
+//   totalAmount: number;
+//   paymentMethod?: string;
+//   status?: string;
+//   billNumber: string;
+// }
 
-export interface BakongTransactionData {
-  hash: string;
-  fromAccountId?: string;
-  amount: number;
-  description?: string;
-  currency: string;
-  toAccountId: string;
-  createdDateMs?: number;
-  acknowledgedDateMs?: number;
-}
+// export interface QRpayload {
+//   amount: number;
+//   currency: string;
+//   billNumber: string;
+//   qr?: string;
+// }
 
-export interface BakongUpdateOrderStatusPayload {
-  status: string;
-  md5Hash: string;
-}
+// export interface Payment {
+//   billNumber: string;
+//   currency: string;
+//   amount: number;
+//   qr?: string;
+// }
 
-export interface PaginatedResponse<T> {
-  items: T[];
-  currentPage: number;
-  totalPages: number;
-  totalItems: number;
-  pageSize: number;
-}
+// export interface KHQRResponse {
+//   qr: string;
+//   md5: string;
+// }
 
-export interface TopEvent extends Events {
-  ticketsSold: number;
-  revenue?: number;
-}
+// export interface ApiKHQRResponse {
+//   data: KHQRResponse;
+// }
 
-export interface Attendee {
-  user: User;
-  ticketType: TicketType;
-  ticket: Ticket;
-}
+// export interface BakongCheckTxnResponse {
+//   responseCode: number;
+//   responseMessage: string;
+//   status: string;
+//   errorCode?: number;
+//   data: BakongTransactionData | null;
+// }
 
-export interface DateRange {
-  startDate: Date | null;
-  endDate: Date | null;
-}
+// export interface BakongTransactionData {
+//   hash: string;
+//   fromAccountId?: string;
+//   amount: number;
+//   description?: string;
+//   currency: string;
+//   toAccountId: string;
+//   createdDateMs?: number;
+//   acknowledgedDateMs?: number;
+// }
 
-export interface ChartDataPoint {
-  month: string;
-  income: number;
-  expenses: number;
-  profit: number;
-}
+// export interface BakongUpdateOrderStatusPayload {
+//   status: string;
+//   md5Hash: string;
+// }
 
-export interface Financials {
-  totalIncome: number;
-  incomeChange: number | null;
-  totalExpenses: number;
-  expensesChange: number | null;
-  netProfit: number;
-  netProfitChange: number | null;
-  taxes: number;
-  chartData: ChartDataPoint[];
-}
+// export interface PaginatedResponse<T> {
+//   items: T[];
+//   currentPage: number;
+//   totalPages: number;
+//   totalItems: number;
+//   pageSize: number;
+// }
 
-export interface ApiResponse<T> {
-  timestamp: string;
-  status: number;
-  message: string;
-  data: T;
-}
+// export interface TopEvent extends Events {
+//   ticketsSold: number;
+//   revenue?: number;
+// }
 
-export type RedeemFailureReason =
-  | "ALREADY_USED"
-  | "NOT_FOUND"
-  | "INTERNAL_ERROR";
+// export interface Attendee {
+//   user: User;
+//   ticketType: TicketType;
+//   ticket: Ticket;
+// }
 
-export type RedeemTicketResponse =
-  | {
-      success: true;
-      message: string;
-      data: {
-        ticket: Ticket;
-        event: Event;
-        user: User;
-        ticketType: TicketType;
-      };
-    }
-  | { success: false; message: string; reason: RedeemFailureReason };
+// export interface DateRange {
+//   startDate: Date | null;
+//   endDate: Date | null;
+// }
+
+// export interface ChartDataPoint {
+//   month: string;
+//   income: number;
+//   expenses: number;
+//   profit: number;
+// }
+
+// export interface Financials {
+//   totalIncome: number;
+//   incomeChange: number | null;
+//   totalExpenses: number;
+//   expensesChange: number | null;
+//   netProfit: number;
+//   netProfitChange: number | null;
+//   taxes: number;
+//   chartData: ChartDataPoint[];
+// }
+
+// export interface ApiResponse<T> {
+//   timestamp: string;
+//   status: number;
+//   message: string;
+//   data: T;
+// }
+
+// export type RedeemFailureReason =
+//   | "ALREADY_USED"
+//   | "NOT_FOUND"
+//   | "INTERNAL_ERROR";
+
+// export type RedeemTicketResponse =
+//   | {
+//       success: true;
+//       message: string;
+//       data: {
+//         ticket: Ticket;
+//         event: Event;
+//         user: User;
+//         ticketType: TicketType;
+//       };
+//     }
+//   | { success: false; message: string; reason: RedeemFailureReason };
+
+// export interface QRCode {
+//   value: string;
+// }
+
+// export interface OrderPageResponse {
+//   id: string;
+//   purchaser: PurchaserResponse;
+//   status: string;
+//   createdAt: string;
+//   qrCode: QRCode;
+//   eventId: string;
+// }
+
+// export interface TicketPageResponse {
+//   id: string;
+//   purchaser: PurchaserResponse;
+//   status: string;
+//   createdAt: string;
+//   qrCode: QRCode;
+//   eventId?: string;
+//   eventName?: string;
+//   ticketName?: string;
+// }

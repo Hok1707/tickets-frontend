@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { Role, User } from "../types";
 import { useCartStore } from "@/store/cartStore";
+import { User } from "@/types/auth";
+import { Role } from "@/types/common";
 
 interface AuthState {
   user: User | null;
@@ -29,7 +30,6 @@ export const useAuthStore = create<AuthState>()(
       login: (user, accessToken, refreshToken) => {
         const role: Role = user.role ?? Role.USER;
         const normalizedUser: User = { ...user, role };
-
         const cartStore = useCartStore.getState();
         cartStore.setUserId(user.id);
 

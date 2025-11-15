@@ -2,6 +2,7 @@ import axios from "axios";
 import { useAuthStore } from "../store/authStore";
 import toast from "react-hot-toast";
 
+
 export const API_BASE_URL = "http://localhost:8081/api/v1";
 
 export const API_ENDPOINTS = {
@@ -76,7 +77,7 @@ apiClient.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const res = await axios.post(API_ENDPOINTS.REFRESH_TOKEN, {
+        const res = await apiClient.post(API_ENDPOINTS.REFRESH_TOKEN, {
           refreshToken,
         });
 

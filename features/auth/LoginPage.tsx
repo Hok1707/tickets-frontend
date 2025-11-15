@@ -23,7 +23,6 @@ const LoginPage: React.FC = () => {
     const login = useAuthStore((state) => state.login);
     const navigate = useNavigate();
 
-    // Validation functions
     const validateEmail = (email: string) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
@@ -36,7 +35,6 @@ const LoginPage: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        // Client-side validation
         const newErrors: Record<string, string> = {};
         if (!validateEmail(email)) {
             newErrors.email = 'Please enter a valid email address';
@@ -61,7 +59,6 @@ const LoginPage: React.FC = () => {
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Login failed';
             toast.error(errorMessage);
-            // Set error state for better UX
             if (errorMessage.toLowerCase().includes('password')) {
                 setErrors({ password: 'Invalid password' });
             } else if (errorMessage.toLowerCase().includes('email')) {
@@ -75,7 +72,6 @@ const LoginPage: React.FC = () => {
     return (
         <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 py-12 px-4 sm:px-6 lg:px-8">
             <div className="w-full max-w-md space-y-8 animate-fade-in">
-                {/* Header */}
                 <div className="text-center">
                     <div className="flex justify-center mx-auto mb-4">
                         <div className="bg-gradient-to-br from-primary-500 to-primary-600 p-4 rounded-2xl shadow-lg transform hover:scale-105 transition-transform">
@@ -99,10 +95,8 @@ const LoginPage: React.FC = () => {
                     </p>
                 </div>
 
-                {/* Form Card */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-gray-700">
                     <form className="space-y-6" onSubmit={handleSubmit}>
-                        {/* Email Field */}
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Email Address
@@ -147,7 +141,6 @@ const LoginPage: React.FC = () => {
                             )}
                         </div>
 
-                        {/* Password Field */}
                         <div>
                             <div className="flex items-center justify-between mb-2">
                                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -207,7 +200,6 @@ const LoginPage: React.FC = () => {
                             )}
                         </div>
 
-                        {/* Submit Button */}
                         <div className="pt-2">
                             <button
                                 type="submit"

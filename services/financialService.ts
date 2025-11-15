@@ -1,5 +1,8 @@
+import { DateRange } from '@/types/common';
+import { Events } from '@/types/events';
+import { ChartDataPoint } from '@/types/financials';
+import { Ticket } from '@/types/tickets';
 import { eventService } from './eventService';
-import type { Ticket, Events,ChartDataPoint, DateRange } from '../types';
 
 const TAX_RATE = 0.20;
 
@@ -28,7 +31,7 @@ const filterDataByDateRange = (allEvents: Events[], allTickets: Ticket[], dateRa
   const end = dateRange.endDate ? new Date(dateRange.endDate.setHours(23, 59, 59, 999)) : null;
 
   const filteredTickets = allTickets.filter(t => {
-    const purchaseDate = new Date(t.purchaseDate);
+    const purchaseDate = new Date(t.createdAt);
     if (start && purchaseDate < start) return false;
     if (end && purchaseDate > end) return false;
     return true;
@@ -76,7 +79,7 @@ const generateChartData = (events: Events[], tickets: Ticket[]): ChartDataPoint[
     const ticketType = event.ticketTypes.find(tt => tt.id === ticket.ticketTypeId);
     if (!ticketType) return;
 
-    const date = new Date(ticket.purchaseDate);
+    const date = new Date(ticket.createdAt);
     const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
     if (!monthlyData[key]) monthlyData[key] = { income: 0, expenses: 0 };
     monthlyData[key].income += ticketType.price;

@@ -1,11 +1,6 @@
-import {
-  ApiResponse,
-  Payment,
-  QRpayload,
-  ApiKHQRResponse,
-  BakongCheckTxnResponse,
-  BakongUpdateOrderStatusPayload,
-} from "@/types";
+
+import { ApiKHQRResponse, BakongCheckTxnResponse, BakongUpdateOrderStatusPayload } from "@/types/bakong";
+import { QRpayload } from "@/types/orders";
 import { API_ENDPOINTS, apiClient } from "./apiConfig";
 import axios from "axios";
 

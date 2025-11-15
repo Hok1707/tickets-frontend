@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { eventService } from '@/services/eventService';
 import { ticketService } from '@/services/ticketService';
-import { TicketType, EventStatus, Role, Events, ApiResponse } from '@/types';
 import toast from 'react-hot-toast';
 import { 
     CalendarIcon, 
@@ -20,6 +19,10 @@ import {
 import PurchaseModal from './components/PurchaseModal';
 import PurchaseSuccessModal from './components/PurchaseSuccessModal';
 import { useAuth } from '@/hooks/useAuth';
+import { EventStatus, Role } from '@/types/common';
+import { Events } from '@/types/events';
+import { ApiResponse } from '@/types/pagination';
+import { TicketType } from '@/types/tickets';
 
 const EventDetailsPage: React.FC = () => {
     const { eventId } = useParams<{ eventId: string }>();
@@ -74,10 +77,8 @@ const EventDetailsPage: React.FC = () => {
 
         try {
             const purchasedTickets = await ticketService.purchaseTickets(
-                user.id,
                 event.id,
-                selectedTicketType.id,
-                quantity
+                user.id
             );
 
             toast.success(`Successfully purchased ${quantity} ticket(s) for ${event.name}!`);

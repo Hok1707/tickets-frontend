@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import type { Events } from '@/types';
 import { CalendarDaysIcon, MapPinIcon } from '@heroicons/react/24/solid';
+import { Events } from '@/types/events';
 
 const UpcomingEventsCard: React.FC<{ events: Events[] }> = ({ events }) => {
   const formatDate = (dateString: string) => {

@@ -15,7 +15,6 @@ import {
   ArrowsUpDownIcon,
   UsersIcon,
 } from "@heroicons/react/24/outline";
-import { Events, TicketType, Role, EventStatus } from "@/types";
 import { eventService } from "@/services/eventService";
 import toast from "react-hot-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -23,6 +22,9 @@ import EventCardSkeleton from "./components/EventCardSkeleton";
 import { useReminderStore } from "@/store/reminderStore";
 import ReminderModal from "./components/ReminderModal";
 import { useCartStore } from "@/store/cartStore";
+import { Role, EventStatus } from "@/types/common";
+import { Events } from "@/types/events";
+import { TicketType } from "@/types/tickets";
 
 type SortOption = "date-asc" | "date-desc" | "price-asc" | "price-desc" | "name-asc" | "name-desc";
 

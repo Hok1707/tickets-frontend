@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import type { Events, TicketType } from '@/types';
 import { 
     XMarkIcon, 
     MapPinIcon, 
@@ -12,6 +11,8 @@ import {
     CheckCircleIcon,
     ExclamationTriangleIcon
 } from '@heroicons/react/24/solid';
+import { Events } from '@/types/events';
+import { TicketType } from '@/types/tickets';
 
 const PurchaseModal = ({ isOpen, onClose, ticketType, event, onConfirm }: { isOpen: boolean, onClose: () => void, ticketType: TicketType | null, event: Events | null, onConfirm: (quantity: number) => void }) => {
     const [quantity, setQuantity] = useState(1);

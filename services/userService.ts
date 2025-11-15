@@ -1,5 +1,5 @@
-import type { User } from '../types';
-import { Role, AccountStatus } from '../types';
+import { User } from '@/types/auth';
+import { Role, AccountStatus } from '@/types/common';
 import { API_ENDPOINTS, apiClient } from './apiConfig';
 import { normalizeUser } from '@/utils/ApiUserResponse';
 

@@ -19,8 +19,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { eventService } from "@/services/eventService";
 import { financialService } from "@/services/financialService";
 import { useOrganizerStore } from "@/store/organizerStore";
-import type { Events, TopEvent, Financials, DateRange } from "@/types";
-import { EventStatus } from "@/types";
 import toast from "react-hot-toast";
 import StatCard from "./StatCard";
 import FinancialCard from "./FinancialCard";
@@ -29,6 +27,9 @@ import OrganizerSidebar from "./OrganizerSidebar";
 import DateRangePicker from "@/components/common/DateRangePicker";
 import StatCardSkeleton from "./StatCardSkeleton";
 import FinancialCardSkeleton from "./FinancialCardSkeleton";
+import { EventStatus } from "@/types/common";
+import { Financials } from "@/types/financials";
+import { TopEvent } from "./TopEventsCard";
 
 const OrganizerDashboard: React.FC = () => {
   const { user } = useAuth();

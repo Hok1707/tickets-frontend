@@ -1,5 +1,7 @@
+import { DateRange } from "@/types/common";
+import { Events, TopEvent } from "@/types/events";
+import { Financials } from "@/types/financials";
 import { create } from "zustand";
-import type { Events, TopEvent, Financials, DateRange } from "@/types";
 
 interface OrganizerStoreState {
   myEvents: Events[];
@@ -10,7 +12,6 @@ interface OrganizerStoreState {
   dateRange: DateRange;
   isLoading: boolean;
 
-  // Computed / derived values
   totalTicketsAvailable: number;
   nextUpcomingEvent: Events | null;
   topRevenueEvent: TopEvent | null;
@@ -33,7 +34,6 @@ export const useOrganizerStore = create<OrganizerStoreState>((set, get) => ({
   dateRange: { startDate: null, endDate: null },
   isLoading: true,
 
-  // Computed values
   get totalTicketsAvailable() {
     return get().myEvents.reduce((total, event) => {
       const tickets = event.ticketTypes?.reduce((sum, t) => sum + (t.totalAvailable ?? 0), 0) ?? 0;

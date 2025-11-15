@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import TopEventsCard, { TopEvent } from './TopEventsCard';
 import { QrCodeIcon, XMarkIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
-import type { Ticket, Events, TicketType, User } from '../../../types';
 import { ticketService } from '../../../services/ticketService';
+import { User } from '@/types/auth';
+import { Events } from '@/types/events';
+import { Ticket, TicketType } from '@/types/tickets';
 
 
 type VerificationResult = {

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
-import { Role } from '../../types';
-import { ChartBarIcon, TicketIcon, CalendarDaysIcon, UsersIcon, HomeIcon, XMarkIcon, Cog6ToothIcon, QrCodeIcon } from '@heroicons/react/24/solid';
+import { ChartBarIcon, TicketIcon, CalendarDaysIcon, UsersIcon, HomeIcon, XMarkIcon, Cog6ToothIcon, QrCodeIcon, ShoppingCartIcon } from '@heroicons/react/24/solid';
+import { Role } from '@/types/common';
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -10,16 +10,16 @@ interface SidebarProps {
 }
 
 const SidebarLink = ({ to, icon, text }: { to: string, icon: React.ReactNode, text: string }) => (
-    <NavLink
-        to={to}
-        className={({ isActive }) =>
-            `group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 duration-300 ease-in-out hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700 ` +
-            (isActive && '!bg-primary-500 !text-white')
-        }
-    >
-        {icon}
-        {text}
-    </NavLink>
+  <NavLink
+    to={to}
+    className={({ isActive }) =>
+      `group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 duration-300 ease-in-out hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700 ` +
+      (isActive && '!bg-primary-500 !text-white')
+    }
+  >
+    {icon}
+    {text}
+  </NavLink>
 );
 
 
@@ -30,7 +30,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
 
   const trigger = useRef<HTMLButtonElement>(null);
   const sidebar = useRef<HTMLDivElement>(null);
-  
+
   useEffect(() => {
     const clickHandler = ({ target }: MouseEvent) => {
       if (!sidebar.current || !trigger.current) return;
@@ -49,14 +49,13 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   return (
     <aside
       ref={sidebar}
-      className={`absolute left-0 top-0 z-50 flex h-screen w-72 flex-col overflow-y-hidden bg-white duration-300 ease-linear dark:bg-gray-800 lg:static lg:translate-x-0 ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}
+      className={`absolute left-0 top-0 z-50 flex h-screen w-72 flex-col overflow-y-hidden bg-white duration-300 ease-linear dark:bg-gray-800 lg:static lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
     >
       <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
         <NavLink to="/" className="text-2xl font-bold text-primary-500 dark:text-primary-400 flex items-center gap-2">
-            <TicketIcon className="h-8 w-8" />
-            <span>Tickets60</span>
+          <TicketIcon className="h-8 w-8" />
+          <span>Tickets60</span>
         </NavLink>
         <button
           ref={trigger}
@@ -87,14 +86,14 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
               </li>
             </ul>
           </div>
-          
+
           {(role === Role.ADMIN || role === Role.ORGANIZER || role === Role.STAFF) && (
             <div>
               <h3 className="mb-4 ml-4 text-sm font-semibold text-gray-500 dark:text-gray-400">MANAGEMENT</h3>
               <ul className="mb-6 flex flex-col gap-1.5">
                 {(role === Role.ADMIN || role === Role.ORGANIZER) && (
                   <li>
-                      <SidebarLink to="/manage-events" icon={<ChartBarIcon className="h-5 w-5" />} text="Manage Events" />
+                    <SidebarLink to="/manage-events" icon={<ChartBarIcon className="h-5 w-5" />} text="Manage Events" />
                   </li>
                 )}
                 <li>
@@ -109,7 +108,10 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
               <h3 className="mb-4 ml-4 text-sm font-semibold text-gray-500 dark:text-gray-400">ADMIN</h3>
               <ul className="mb-6 flex flex-col gap-1.5">
                 <li>
-                    <SidebarLink to="/admin/users" icon={<UsersIcon className="h-5 w-5" />} text="User Management" />
+                  <SidebarLink to="/admin/users" icon={<UsersIcon className="h-5 w-5" />} text="User Management" />
+                </li>
+                <li>
+                  <SidebarLink to="/admin/tickets" icon={<TicketIcon className="h-5 w-5" />} text="Tickets Management" />
                 </li>
               </ul>
             </div>

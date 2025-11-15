@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { EventStatus, Events, TicketType } from "@/types";
 import { useEventStore } from "@/store/eventStore";
+import { EventStatus } from "@/types/common";
+import { Events } from "@/types/events";
+import { TicketType } from "@/types/tickets";
 
 interface EventModalProps {
   event?: Events;

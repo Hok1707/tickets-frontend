@@ -1,5 +1,6 @@
+import { Events } from "@/types/events";
+import { TicketType } from "@/types/tickets";
 import { create } from "zustand";
-import { Events, TicketType, EventStatus } from "@/types";
 
 interface EventStoreState {
   selectedEvent: Events | null;

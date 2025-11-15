@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { ticketService } from '@/services/ticketService';
-import type { Events, Attendee, TicketStatus } from '@/types';
-import { TicketStatus as TicketStatusEnum } from '@/types';
+import { TicketStatus as TicketStatusEnum } from '@/types/common';
 import { 
   XMarkIcon, 
   UserGroupIcon, 
@@ -17,6 +16,9 @@ import {
   TagIcon,
 } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
+import { TicketStatus } from '@/types/common';
+import { Events } from '@/types/events';
+import { Attendee } from '@/types/tickets';
 
 type SortOption = 'name-asc' | 'name-desc' | 'email-asc' | 'email-desc' | 'date-asc' | 'date-desc' | 'ticket-asc' | 'ticket-desc';
 

@@ -1,12 +1,8 @@
 import { create } from "zustand";
 import { useAuthStore } from "@/store/authStore";
-import { Events, TicketType } from "@/types";
-
-interface CartItem {
-  event: Events;
-  ticketType: TicketType;
-  quantity: number;
-}
+import { Events } from "@/types/events";
+import { TicketType } from "@/types/tickets";
+import { CartItem } from "@/types/orders";
 
 interface CartState {
   userId: string | null;

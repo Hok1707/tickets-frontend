@@ -2,7 +2,7 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import type { Role } from '../../types';
+import { Role } from '@/types/common';
 
 interface RoleBasedRouteProps {
   allowedRoles: Role[];

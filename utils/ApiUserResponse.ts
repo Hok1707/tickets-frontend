@@ -1,4 +1,5 @@
-import { User, Role, AccountStatus } from '../types';
+import { User } from "@/types/auth";
+import { Role, AccountStatus } from "@/types/common";
 
 export const normalizeUser = (userFromApi: any): User => ({
   id: userFromApi.id,

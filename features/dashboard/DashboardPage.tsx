@@ -1,10 +1,10 @@
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
-import { Role } from '../../types';
 import AdminDashboard from './components/AdminDashboard';
 import OrganizerDashboard from './components/OrganizerDashboard';
 import UserDashboard from './components/UserDashboard';
 import StaffDashboard from './components/StaffDashboard';
+import { Role } from '@/types/common';
 
 const DashboardPage: React.FC = () => {
   const { role } = useAuth();

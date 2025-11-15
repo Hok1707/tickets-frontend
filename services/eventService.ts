@@ -1,6 +1,7 @@
 import axios from "axios";
 import { API_ENDPOINTS, apiClient } from "./apiConfig";
-import { ApiResponse, Events, PaginatedResponse } from "@/types";
+import { Events } from "@/types/events";
+import { PaginatedResponse, ApiResponse } from "@/types/pagination";
 
 export const eventService = {
   getEvents: async (

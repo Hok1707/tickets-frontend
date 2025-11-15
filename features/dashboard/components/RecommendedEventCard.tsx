@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import type { Events } from '@/types';
 import { MapPinIcon, CalendarIcon } from '@heroicons/react/24/solid';
+import { Events } from '@/types/events';
 
 const RecommendedEventCard: React.FC<{ event: Events }> = ({ event }) => {
   const formatDate = (dateString: string) => {

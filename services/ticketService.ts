@@ -1,5 +1,8 @@
+import { Attendee, Ticket, TicketPageResponse, TicketType, TicketUserResponse } from "@/types/tickets";
 import { API_ENDPOINTS, apiClient } from "./apiConfig";
-import type { Ticket, TicketType, Events, User, Attendee, RedeemTicketResponse, TicketUserResponse, PaginatedResponse } from "../types";
+import { PaginatedResponse } from "@/types/pagination";
+import { User } from "@/types/auth";
+import { Events } from "@/types/events";
 
 export const ticketService = {
   getMyTickets: async (userId: string): Promise<TicketUserResponse[]> => {
@@ -16,8 +19,10 @@ export const ticketService = {
     return res.data;
   },
 
-  getAllTickets: async (): Promise<PaginatedResponse<Ticket[]>> => {
-    const res = await apiClient.get(`${API_ENDPOINTS.TICKET}/all`);
+  getAllTickets: async (page:number, size:number): Promise<PaginatedResponse<TicketPageResponse>> => {
+    const res = await apiClient.get(`${API_ENDPOINTS.TICKET}/all`,{
+      params: { page, size  }
+    });
     return res.data.data;
   },
 
@@ -28,10 +33,10 @@ export const ticketService = {
     return res.data;
   },
 
-  redeemTicket: async (qrCodeValue: string): Promise<RedeemTicketResponse> => {
-    const res = await apiClient.put(`${API_ENDPOINTS.TICKET}/redeem/${qrCodeValue}`);
-    return res.data;
-  },
+  // redeemTicket: async (qrCodeValue: string): Promise<RedeemTicketResponse> => {
+  //   const res = await apiClient.put(`${API_ENDPOINTS.TICKET}/redeem/${qrCodeValue}`);
+  //   return res.data;
+  // },
 
   replaceTicket: async (ticketId: string): Promise<{ success: boolean; newTicket: Ticket }> => {
     const res = await apiClient.put(`${API_ENDPOINTS.TICKET}/replace/${ticketId}`);

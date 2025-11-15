@@ -2,8 +2,10 @@ import { create } from "zustand";
 import { userService } from "@/services/userService";
 import { eventService } from "@/services/eventService";
 import { financialService } from "@/services/financialService";
-import type { DateRange, Financials, TopEvent } from "@/types";
 import { ticketService } from "@/services/ticketService";
+import { TopEvent } from "@/types/events";
+import { Financials } from "@/types/financials";
+import { DateRange } from "@/types/common";
 
 interface DashboardState {
   stats: { users: number; events: number; tickets: number };
@@ -27,34 +29,43 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
 
   fetchDashboardData: async () => {
     set({ isLoading: true });
+
     try {
       const { dateRange } = get();
 
-      const [usersData, allEventsRes, allTicket] = await Promise.all([
+      const [usersRes, eventsRes, ticketsRes, financials] = await Promise.all([
         userService.getUsers(),
         eventService.getEvents(0, 100),
-        ticketService.getAllTickets(),
+        ticketService.getAllTickets(0, 100),
+        financialService.getSystemWideFinancials(),
       ]);
-      const allEvents = allEventsRes.items;
 
-      const ticketsSold = allTicket.totalItems;
+      const allEvents = eventsRes.items ?? [];
+      const ticketsSold = ticketsRes?.totalItems ?? 0;
+console.log('ticket res ',ticketsRes);
 
       const stats = {
-        users: usersData.length,
+        users: usersRes?.length ?? 0,
         events: allEvents.length,
         tickets: ticketsSold,
       };
 
       const topSellingEvents: TopEvent[] = allEvents
-        .map((e) => ({ ...e, ticketsSold: Math.floor(Math.random() * 500) }))
+        .map((event) => ({
+          ...event,
+          ticketsSold: Math.floor(Math.random() * 500),
+        }))
         .sort((a, b) => b.ticketsSold - a.ticketsSold)
         .slice(0, 5);
 
-      const financials = await financialService.getSystemWideFinancials();
-
-      set({ stats, topSellingEvents, financials, isLoading: false });
+      set({
+        stats,
+        topSellingEvents,
+        financials,
+        isLoading: false,
+      });
     } catch (err) {
-      console.error(err);
+      console.error("Dashboard fetch error:", err);
       set({ isLoading: false });
     }
   },

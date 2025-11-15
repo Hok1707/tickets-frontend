@@ -1,36 +1,8 @@
 import axios from "axios";
-import { Role, User } from "../types";
 import { API_ENDPOINTS } from "./apiConfig";
-
-export interface LoginResponse {
-  user: User & { roleName?: string; role?: string };
-  accessToken: string;
-}
-
-export interface RegisterData {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
-
-export interface RegisterResponse {
-  message: string;
-  email: string;
-}
-
-export interface ChangePasswordData {
-  userId: string;
-  currentPassword?: string;
-  newPassword: string;
-}
-
-interface ApiResponse<T> {
-  timestamp: string;
-  status: number;
-  message: string;
-  data: T;
-}
+import { LoginResponse, User, RegisterData, RegisterResponse, ChangePasswordData } from "@/types/auth";
+import { Role } from "@/types/common";
+import { ApiResponse } from "@/types/pagination";
 
 export const normalizeRole = (roleStr?: string | null): Role => {
   if (!roleStr) return Role.USER;

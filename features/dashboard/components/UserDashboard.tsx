@@ -11,7 +11,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { ticketService } from "@/services/ticketService";
 import { eventService } from "@/services/eventService";
 
-import { EventStatus, Role, TicketStatus,TicketUserResponse } from "@/types";
 
 import {
   TicketIcon,
@@ -22,6 +21,8 @@ import {
   CurrencyDollarIcon,
   CheckCircleIcon
 } from "@heroicons/react/24/outline";
+import { EventStatus, TicketStatus } from "@/types/common";
+import { TicketUserResponse } from "@/types/tickets";
 
 
 const UserDashboard: React.FC = () => {

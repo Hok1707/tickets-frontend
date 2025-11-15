@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { eventService } from "@/services/eventService";
-import { Events, EventStatus, PaginatedResponse, TicketType, Role } from "@/types";
 import toast from "react-hot-toast";
 import EventModal from "./components/EventModal";
 import { useAuth } from "@/hooks/useAuth";
@@ -19,6 +18,9 @@ import {
   FunnelIcon,
   XMarkIcon
 } from "@heroicons/react/24/outline";
+import { EventStatus, Role } from "@/types/common";
+import { Events } from "@/types/events";
+import { PaginatedResponse } from "@/types/pagination";
 
 const EventManagementPage: React.FC = () => {
   const [events, setEvents] = useState<Events[]>([]);

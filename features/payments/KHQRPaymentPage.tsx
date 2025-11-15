@@ -4,10 +4,11 @@ import { paymentService } from "@/services/paymentService";
 import { orderService } from "@/services/orderService";
 import QRCode from "react-qr-code";
 import toast from "react-hot-toast";
-import { BakongCheckTxnResponse, QRpayload } from "@/types";
 import { useCartStore } from "@/store/cartStore";
 import { ticketService } from "@/services/ticketService";
 import { useAuth } from "@/hooks/useAuth";
+import { BakongCheckTxnResponse } from "@/types/bakong";
+import { QRpayload } from "@/types/orders";
 
 const QR_EXPIRE_TIME = 120;
 

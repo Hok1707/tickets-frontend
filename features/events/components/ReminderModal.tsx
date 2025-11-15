@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useReminderStore } from '../../../store/reminderStore';
 import { BellIcon, XMarkIcon } from '@heroicons/react/24/solid';
-import { Events } from '@/types';
+import { Events } from '@/types/events';
 
 interface ReminderModalProps {
   isOpen: boolean;

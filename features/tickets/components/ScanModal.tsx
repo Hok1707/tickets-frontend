@@ -2,12 +2,14 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { ticketService } from '../../../services/ticketService';
-import type { Ticket, Events, TicketType, User, RedeemFailureReason, RedeemTicketResponse } from '../../../types';
 import { XMarkIcon, CheckCircleIcon, XCircleIcon, ExclamationTriangleIcon, QrCodeIcon } from '@heroicons/react/24/solid';
+import { User } from '@/types/auth';
+import { Events } from '@/types/events';
+import { Ticket, TicketType } from '@/types/tickets';
 
 type VerificationResult = {
   status: 'success' | 'error';
-  reason?: RedeemFailureReason;
+  reason?: string;
   message: string;
   data?: { ticket: Ticket; event: Events; ticketType: TicketType; user: User };
 } | null;
