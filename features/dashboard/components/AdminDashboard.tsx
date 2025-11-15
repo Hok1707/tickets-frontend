@@ -30,19 +30,19 @@ const AdminDashboard: React.FC = () => {
     financials,
     topSellingEvents,
     dateRange,
+    orders,
     isLoading,
     fetchDashboardData,
     setDateRange
   } = useDashboardStore();
 
-  /** FIX: Prevent infinite loop + ensure fetch triggers only on date change */
   useEffect(() => {
     fetchDashboardData().catch(() =>
       toast.error('Failed to load dashboard data')
     );
   }, [dateRange.startDate, dateRange.endDate]);
 
-  /** ===== Skeleton While Loading ===== */
+
   if (isLoading) {
     return (
       <div className="space-y-8">
@@ -93,7 +93,6 @@ const AdminDashboard: React.FC = () => {
     );
   }
 
-  /** ===== Main Dashboard Content ===== */
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
       <main className="lg:col-span-2 space-y-8">
@@ -106,7 +105,6 @@ const AdminDashboard: React.FC = () => {
           </p>
         </div>
 
-        {/* ===== Stats Section ===== */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <StatCard
             icon={<UsersIcon className="h-6 w-6 text-blue-500" />}
@@ -127,7 +125,6 @@ const AdminDashboard: React.FC = () => {
           />
         </div>
 
-        {/* ===== Financial Summary ===== */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
             <div>
@@ -150,7 +147,7 @@ const AdminDashboard: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-sm">
             <FinancialCard
               title="Total Income"
-              value={financials?.totalIncome ?? 0}
+              value={orders?.totalIncome ?? 0}
               icon={
                 <ArrowTrendingUpIcon className="h-6 w-6 text-green-600 dark:text-green-400" />
               }
@@ -159,8 +156,8 @@ const AdminDashboard: React.FC = () => {
             />
 
             <FinancialCard
-              title="Total Expenses"
-              value={financials?.totalExpenses ?? 0}
+              title="Total Amount"
+              value={orders?.totalIncome ?? 0}
               icon={
                 <ArrowTrendingDownIcon className="h-6 w-6 text-red-600 dark:text-red-400" />
               }
@@ -171,7 +168,7 @@ const AdminDashboard: React.FC = () => {
 
             <FinancialCard
               title="Net Profit"
-              value={financials?.netProfit ?? 0}
+              value={orders?.netProfit ?? 0}
               icon={
                 <BanknotesIcon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
               }
@@ -180,8 +177,7 @@ const AdminDashboard: React.FC = () => {
             />
 
             <FinancialCard
-              title="Taxes (20%)"
-              value={financials?.taxes ?? 0}
+              title="Taxes (5%)" value={orders?.transactionFee ?? 0}
               icon={
                 <ReceiptPercentIcon className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
               }
@@ -190,7 +186,6 @@ const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* ===== Chart Section ===== */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -219,7 +214,6 @@ const AdminDashboard: React.FC = () => {
           )}
         </div>
 
-        {/* ===== Quick Actions ===== */}
         <div>
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -295,7 +289,6 @@ const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* ===== System Status ===== */}
         <div className="bg-gradient-to-r from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 border border-primary-200 dark:border-primary-700 rounded-lg p-6">
           <div className="flex items-start gap-4">
             <div className="bg-primary-500 p-3 rounded-lg">

@@ -15,3 +15,9 @@ export interface Financials {
   taxes: number;
   chartData: ChartDataPoint[];
 }
+
+export interface FinancialsResponse {
+  netProfit: number;
+  totalIncome: number;
+  transactionFee: number;
+}

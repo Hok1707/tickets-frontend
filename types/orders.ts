@@ -1,5 +1,5 @@
-import { Events } from './events';
-import { PurchaserResponse, QRCode, TicketType } from './tickets';
+import { Events } from "./events";
+import { PurchaserResponse, QRCode, TicketType } from "./tickets";
 
 export interface Order {
   orderId: string;
@@ -23,17 +23,22 @@ export interface Payment {
   qr?: string;
 }
 
-export interface OrderPageResponse {
-  id: string;
-  purchaser: PurchaserResponse;
-  status: string;
-  createdAt: string;
-  qrCode: QRCode;
-  eventId: string;
-}
 
 export interface CartItem {
   event: Events;
   ticketType: TicketType;
   quantity: number;
+}
+
+export interface OrderPageResponse {
+  id: string;
+  userId: string;
+  status: string;
+  paymentMethod: string;
+  subtotal: number;
+  transactionFee: number;
+  totalAmount: number;
+  billNumber: string;
+  createdAt: string;
+  updatedAt: string;
 }

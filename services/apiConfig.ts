@@ -3,7 +3,8 @@ import { useAuthStore } from "../store/authStore";
 import toast from "react-hot-toast";
 
 
-export const API_BASE_URL = "http://localhost:8081/api/v1";
+// export const API_BASE_URL = "http://localhost:8081/api/v1";
+export const API_BASE_URL = "http://157.10.73.192/api/v1";
 
 export const API_ENDPOINTS = {
   LOGIN: `${API_BASE_URL}/auth/login`,

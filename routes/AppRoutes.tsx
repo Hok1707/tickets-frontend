@@ -20,7 +20,7 @@ const CartPage = lazy(()=>import('../features/cart/CartPage'))
 const CheckoutPage = lazy(()=> import('../features/orders/CheckoutPage'))
 const KHQRPaymentPage = lazy(()=>import('../features/payments/KHQRPaymentPage'))
 const PaymentSuccessPage = lazy(()=>import('../features/payments/PaymentSuccessPage'))
-// const OrdersPage = lazy(()=>import('../features/orders/components/OrdersPage'));
+const OrdersPage = lazy(()=>import('../features/orders/components/OrderManagementPage'));
 const TicketsPage = lazy(()=>import('../features/tickets/components/TicketsPage'));
 
 const AppRoutes: React.FC = () => {
@@ -48,7 +48,7 @@ const AppRoutes: React.FC = () => {
 
                     <Route element={<RoleBasedRoute allowedRoles={[Role.ADMIN]} />}>
                         <Route path="/admin/users" element={<UserManagementPage />} />
-                        {/* <Route path="/admin/orders" element={<OrdersPage />} /> */}
+                        <Route path="/admin/orders" element={<OrdersPage />} />
                         <Route path="/admin/tickets" element={<TicketsPage />} />
                     </Route>
 

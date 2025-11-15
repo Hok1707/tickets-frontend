@@ -14,7 +14,7 @@ export const eventService = {
     return res.data;
   },
 
-    getEventsAdmin: async (
+  getEventsAdmin: async (
     page = 0,
     size = 10
   ): Promise<PaginatedResponse<Events>> => {
@@ -34,11 +34,12 @@ export const eventService = {
     return res.data;
   },
 
-getEventById: async (id: string): Promise<ApiResponse<Events>> => {
-  const res = await axios.get<ApiResponse<Events>>(`${API_ENDPOINTS.EVENT}/published/${id}`);   
-  return res.data;
-},
-
+  getEventById: async (id: string): Promise<ApiResponse<Events>> => {
+    const res = await axios.get<ApiResponse<Events>>(
+      `${API_ENDPOINTS.EVENT}/published/${id}`
+    );
+    return res.data;
+  },
 
   createEvent: async (eventData: any): Promise<Events> => {
     const res = await apiClient.post(

@@ -20,8 +20,9 @@ import {
   XCircleIcon,
 } from "@heroicons/react/24/solid";
 
-import { EventStatus, Role, TicketStatus, TicketUserResponse } from "@/types";
 import ScanModal from "./components/ScanModal";
+import { TicketStatus, EventStatus, Role } from "@/types/common";
+import { TicketUserResponse } from "@/types/tickets";
 
 
 const TicketStatusBadge: React.FC<{

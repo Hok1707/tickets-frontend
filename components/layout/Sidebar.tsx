@@ -111,6 +111,9 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
                   <SidebarLink to="/admin/users" icon={<UsersIcon className="h-5 w-5" />} text="User Management" />
                 </li>
                 <li>
+                  <SidebarLink to="/admin/orders" icon={<ShoppingCartIcon className="h-5 w-5" />} text="Orders Management" />
+                </li>
+                <li>
                   <SidebarLink to="/admin/tickets" icon={<TicketIcon className="h-5 w-5" />} text="Tickets Management" />
                 </li>
               </ul>
