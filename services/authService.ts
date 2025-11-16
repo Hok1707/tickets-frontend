@@ -1,13 +1,21 @@
 import axios from "axios";
 import { API_ENDPOINTS } from "./apiConfig";
-import { LoginResponse, User, RegisterData, RegisterResponse, ChangePasswordData } from "@/types/auth";
+import {
+  LoginResponse,
+  User,
+  RegisterData,
+  RegisterResponse,
+  ChangePasswordData,
+} from "@/types/auth";
 import { Role } from "@/types/common";
 import { ApiResponse } from "@/types/pagination";
 
 export const normalizeRole = (roleStr?: string | null): Role => {
   if (!roleStr) return Role.USER;
   const upper = roleStr.toUpperCase();
-  return Object.values(Role).includes(upper as Role) ? (upper as Role) : Role.USER;
+  return Object.values(Role).includes(upper as Role)
+    ? (upper as Role)
+    : Role.USER;
 };
 
 export const authService = {
@@ -75,5 +83,18 @@ export const authService = {
         error.response?.data?.message || "Unable to change password."
       );
     }
+  },
+  forgotPassword: async (email: string) => {
+    const res = await axios.post(`${API_ENDPOINTS.FORGOT_PASSWORD}`, {
+      email,
+    });
+    return res.data;
+  },
+    resetPassword: async (token: string, newPassword: string) => {
+    const res = await axios.post(`${API_ENDPOINTS.RESET_PASSWORD}`, {
+      token,
+      newPassword,
+    });
+    return res.data;
   },
 };

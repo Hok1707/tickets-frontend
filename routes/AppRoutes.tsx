@@ -5,6 +5,7 @@ import Layout from '../components/layout/Layout';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import RoleBasedRoute from '../components/auth/RoleBasedRoute';
 import { Role } from '@/types/common';
+import ResetPassword from '../features/auth/ResetPassword';
 
 const LoginPage = lazy(() => import('../features/auth/LoginPage'));
 const RegisterPage = lazy(() => import('../features/auth/RegisterPage'));
@@ -22,12 +23,17 @@ const KHQRPaymentPage = lazy(()=>import('../features/payments/KHQRPaymentPage'))
 const PaymentSuccessPage = lazy(()=>import('../features/payments/PaymentSuccessPage'))
 const OrdersPage = lazy(()=>import('../features/orders/components/OrderManagementPage'));
 const TicketsPage = lazy(()=>import('../features/tickets/components/TicketsPage'));
+const ResetPasswordPage = lazy(() => import('../features/auth/ResetPassword')); 
+const ForgotPasswordPage = lazy(() => import('../features/auth/ForgotPassword'));
 
 const AppRoutes: React.FC = () => {
     return (
         <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+
             <Route element={<ProtectedRoute />}>
                 <Route element={<Layout />}>
                     <Route path="/" element={<DashboardPage />} />

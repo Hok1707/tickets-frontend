@@ -221,7 +221,6 @@ export default function OrderManagementPage() {
         </div>
       </div>
 
-      {/* STATUS MODAL */}
       <ConfirmationModal
         isOpen={statusModal.isOpen}
         onClose={() =>
