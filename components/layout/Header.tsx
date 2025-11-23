@@ -11,8 +11,10 @@ import {
   Bars3Icon,
   Cog6ToothIcon,
   ShoppingCartIcon,
+  GlobeAltIcon,
 } from "@heroicons/react/24/outline";
 import ConfirmationModal from "@/components/common/ConfirmationModal";
+import { useTranslation } from "react-i18next";
 
 interface HeaderProps {
   sidebarOpen: boolean;
@@ -35,6 +37,7 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
 
   const trigger = useRef<HTMLButtonElement>(null);
   const dropdown = useRef<HTMLDivElement>(null);
@@ -72,11 +75,16 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
     setIsLogoutModalOpen(true);
   };
 
+  const toggleLanguage = () => {
+    const newLang = i18n.language === 'en' ? 'km' : 'en';
+    i18n.changeLanguage(newLang);
+  };
+
   const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
     <>
-      <header className="sticky top-0 z-40 flex w-full bg-white dark:bg-gray-800 shadow-sm">
+      <header className="sticky top-0 z-40 flex w-full bg-white/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 dark:bg-gray-800/80 shadow-sm transition-colors duration-300">
         <div className="flex flex-grow items-center justify-between px-4 py-3 md:px-6 2xl:px-11">
           <div className="flex items-center gap-2 sm:gap-4 lg:hidden">
             <button
@@ -105,6 +113,15 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
                 )}
               </Link>
 
+              {/* Language Toggle */}
+              <button
+                onClick={toggleLanguage}
+                className="flex items-center gap-1 px-3 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                <GlobeAltIcon className="h-5 w-5" />
+                <span>{i18n.language === 'en' ? 'EN' : 'KH'}</span>
+              </button>
+
               {/* Theme Toggle */}
               <button
                 onClick={toggleTheme}
@@ -126,13 +143,13 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
                 >
                   <span className="hidden text-right lg:block">
                     <span className="block text-sm font-medium text-gray-800 dark:text-white">
-                      {user?.username || "Guest"}
+                      {user?.username || t('header.guest')}
                     </span>
                     <span className="block text-xs text-gray-500 dark:text-gray-400">
                       {role}
                     </span>
                   </span>
-                  <span className="h-10 w-10 rounded-full bg-primary-500 text-white flex items-center justify-center font-semibold text-sm">
+                  <span className="h-10 w-10 rounded-full bg-primary-500 text-white flex items-center justify-center font-semibold text-sm shadow-md shadow-primary-500/20">
                     {user ? getInitials(user.username) : <UserCircleIcon className="h-8 w-8" />}
                   </span>
                 </button>
@@ -140,7 +157,7 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
                 {dropdownOpen && (
                   <div
                     ref={dropdown}
-                    className="absolute right-0 mt-2.5 flex w-64 flex-col rounded-lg border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-800"
+                    className="absolute right-0 mt-2.5 flex w-64 flex-col rounded-xl border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-800 animate-in fade-in zoom-in-95 duration-200"
                   >
                     <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
                       <p className="font-semibold text-sm text-gray-800 dark:text-white truncate">
@@ -155,19 +172,19 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
                         <Link
                           to="/settings"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-gray-700 duration-200 ease-in-out hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                          className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 duration-200 ease-in-out hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
                         >
                           <Cog6ToothIcon className="h-5 w-5" />
-                          Settings
+                          {t('menu.settings')}
                         </Link>
                       </li>
                     </ul>
                     <button
                       onClick={handleLogoutClick}
-                      className="flex items-center gap-2.5 border-t border-gray-200 dark:border-gray-700 py-2 px-4 text-sm font-medium duration-200 ease-in-out hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 m-2 rounded-md"
+                      className="flex items-center gap-2.5 border-t border-gray-200 dark:border-gray-700 py-2 px-4 text-sm font-medium duration-200 ease-in-out hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 m-2 rounded-lg"
                     >
                       <ArrowRightOnRectangleIcon className="h-5 w-5" />
-                      Log Out
+                      {t('header.logout')}
                     </button>
                   </div>
                 )}
@@ -181,9 +198,9 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
         isOpen={isLogoutModalOpen}
         onClose={() => setIsLogoutModalOpen(false)}
         onConfirm={handleLogout}
-        title="Confirm Logout"
+        title={t('header.logout')}
         message="Are you sure you want to log out of your account?"
-        confirmButtonText="Log Out"
+        confirmButtonText={t('header.logout')}
         variant="primary"
       />
     </>

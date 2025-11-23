@@ -23,6 +23,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useDashboardStore } from '@/store/adminDashboardStore';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 const AdminDashboard: React.FC = () => {
   const {
@@ -35,6 +36,7 @@ const AdminDashboard: React.FC = () => {
     fetchDashboardData,
     setDateRange
   } = useDashboardStore();
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchDashboardData().catch(() =>
@@ -98,29 +100,29 @@ const AdminDashboard: React.FC = () => {
       <main className="lg:col-span-2 space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Admin Dashboard 👨‍💼
+            {t('dashboard.adminTitle')}
           </h1>
           <p className="mt-1 text-gray-600 dark:text-gray-400">
-            Complete overview of system performance and statistics.
+            {t('dashboard.adminSubtitle')}
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <StatCard
             icon={<UsersIcon className="h-6 w-6 text-blue-500" />}
-            title="Total Users"
+            title={t('dashboard.totalUsers')}
             value={(stats?.users ?? 0).toLocaleString()}
           />
 
           <StatCard
             icon={<CalendarDaysIcon className="h-6 w-6 text-purple-500" />}
-            title="Total Events"
+            title={t('dashboard.totalEvents')}
             value={(stats?.events ?? 0).toLocaleString()}
           />
 
           <StatCard
             icon={<TicketIcon className="h-6 w-6 text-green-500" />}
-            title="Tickets Sold"
+            title={t('dashboard.ticketsSold')}
             value={(stats?.tickets ?? 0).toLocaleString()}
           />
         </div>
@@ -130,10 +132,10 @@ const AdminDashboard: React.FC = () => {
             <div>
               <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                 <ChartBarIcon className="h-6 w-6 text-primary-500" />
-                Financial Overview
+                {t('dashboard.financialOverview')}
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Track revenue, expenses, and profitability
+                {t('dashboard.financialSubtitle')}
               </p>
             </div>
 
@@ -146,7 +148,7 @@ const AdminDashboard: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-sm">
             <FinancialCard
-              title="Total Income"
+              title={t('dashboard.totalIncome')}
               value={orders?.totalIncome ?? 0}
               icon={
                 <ArrowTrendingUpIcon className="h-6 w-6 text-green-600 dark:text-green-400" />
@@ -156,7 +158,7 @@ const AdminDashboard: React.FC = () => {
             />
 
             <FinancialCard
-              title="Total Amount"
+              title={t('dashboard.totalAmount')}
               value={orders?.totalIncome ?? 0}
               icon={
                 <ArrowTrendingDownIcon className="h-6 w-6 text-red-600 dark:text-red-400" />
@@ -167,7 +169,7 @@ const AdminDashboard: React.FC = () => {
             />
 
             <FinancialCard
-              title="Net Profit"
+              title={t('dashboard.netProfit')}
               value={orders?.netProfit ?? 0}
               icon={
                 <BanknotesIcon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
@@ -177,7 +179,7 @@ const AdminDashboard: React.FC = () => {
             />
 
             <FinancialCard
-              title="Taxes (5%)" value={orders?.transactionFee ?? 0}
+              title={t('dashboard.taxes')} value={orders?.transactionFee ?? 0}
               icon={
                 <ReceiptPercentIcon className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
               }
@@ -191,10 +193,10 @@ const AdminDashboard: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                 <ChartBarIcon className="h-5 w-5 text-primary-500" />
-                Performance Over Time
+                {t('dashboard.performance')}
               </h3>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Income, expenses, and profit trends
+                {t('dashboard.performanceSubtitle')}
               </p>
             </div>
           </div>
@@ -219,10 +221,10 @@ const AdminDashboard: React.FC = () => {
             <div>
               <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                 <Cog6ToothIcon className="h-6 w-6 text-primary-500" />
-                Quick Actions
+                {t('dashboard.quickActions')}
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Common administrative tasks
+                {t('dashboard.quickActionsSubtitle')}
               </p>
             </div>
           </div>
@@ -237,10 +239,10 @@ const AdminDashboard: React.FC = () => {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <UsersIcon className="h-5 w-5" />
-                  <h3 className="font-bold text-lg">Manage Users</h3>
+                  <h3 className="font-bold text-lg">{t('dashboard.manageUsers')}</h3>
                 </div>
                 <p className="text-sm text-blue-100">
-                  View, edit, and manage user roles and permissions
+                  {t('dashboard.manageUsersDesc')}
                 </p>
               </div>
 
@@ -256,10 +258,10 @@ const AdminDashboard: React.FC = () => {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <CalendarDaysIcon className="h-5 w-5" />
-                  <h3 className="font-bold text-lg">Manage Events</h3>
+                  <h3 className="font-bold text-lg">{t('dashboard.manageEvents')}</h3>
                 </div>
                 <p className="text-sm text-purple-100">
-                  Create, edit, and manage all events in the system
+                  {t('dashboard.manageEventsDesc')}
                 </p>
               </div>
 
@@ -277,9 +279,9 @@ const AdminDashboard: React.FC = () => {
                   <QrCodeIcon className="h-8 w-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg mb-1">Scan & Verify Tickets</h3>
+                  <h3 className="font-bold text-lg mb-1">{t('dashboard.scanVerify')}</h3>
                   <p className="text-sm text-green-100">
-                    Quick access to ticket scanning and verification
+                    {t('dashboard.scanVerifyDesc')}
                   </p>
                 </div>
               </div>
@@ -296,11 +298,10 @@ const AdminDashboard: React.FC = () => {
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
-                System Status
+                {t('dashboard.systemStatus')}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                All systems operational.{' '}
-                {stats?.users} users, {stats?.events} events, {stats?.tickets} tickets sold.
+                {t('dashboard.systemOperational')} {stats?.users} users, {stats?.events} events, {stats?.tickets} tickets sold.
               </p>
             </div>
           </div>

@@ -2,9 +2,8 @@ import axios from "axios";
 import { useAuthStore } from "../store/authStore";
 import toast from "react-hot-toast";
 
-// export const API_BASE_URL = "http://localhost:8081/api/v1";
-export const API_BASE_URL = "http://157.10.73.192:8080/api/v1";
-// export const FRONTEND_URL = import.meta.env.VITE_API_URL || "http://localhost:8081/api/v1";
+// export const API_BASE_URL = "http://157.10.73.192:8080/api/v1";
+export const API_BASE_URL = import.meta.env.VITE_API_URL || "/api/v1";
 export const API_ENDPOINTS = {
   LOGIN: `${API_BASE_URL}/auth/login`,
   FORGOT_PASSWORD: `${API_BASE_URL}/auth/forgot-password`,
@@ -21,7 +20,7 @@ export const API_ENDPOINTS = {
 };
 
 export const apiClient = axios.create({
-  baseURL: API_BASE_URL,
+  // baseURL: API_BASE_URL,
 });
 
 apiClient.interceptors.request.use(

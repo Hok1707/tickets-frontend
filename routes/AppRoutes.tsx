@@ -5,7 +5,6 @@ import Layout from '../components/layout/Layout';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import RoleBasedRoute from '../components/auth/RoleBasedRoute';
 import { Role } from '@/types/common';
-import ResetPassword from '../features/auth/ResetPassword';
 
 const LoginPage = lazy(() => import('../features/auth/LoginPage'));
 const RegisterPage = lazy(() => import('../features/auth/RegisterPage'));
@@ -17,14 +16,15 @@ const UserManagementPage = lazy(() => import('../features/admin/UserManagementPa
 const EventManagementPage = lazy(() => import('../features/events/EventManagementPage'));
 const SettingsPage = lazy(() => import('../features/settings/SettingsPage'));
 const ScanTicketPage = lazy(() => import('../features/tickets/ScanTicketPage'));
-const CartPage = lazy(()=>import('../features/cart/CartPage'))
-const CheckoutPage = lazy(()=> import('../features/orders/CheckoutPage'))
-const KHQRPaymentPage = lazy(()=>import('../features/payments/KHQRPaymentPage'))
-const PaymentSuccessPage = lazy(()=>import('../features/payments/PaymentSuccessPage'))
-const OrdersPage = lazy(()=>import('../features/orders/components/OrderManagementPage'));
-const TicketsPage = lazy(()=>import('../features/tickets/components/TicketsPage'));
-const ResetPasswordPage = lazy(() => import('../features/auth/ResetPassword')); 
+const CartPage = lazy(() => import('../features/cart/CartPage'))
+const CheckoutPage = lazy(() => import('../features/orders/CheckoutPage'))
+const KHQRPaymentPage = lazy(() => import('../features/payments/KHQRPaymentPage'))
+const PaymentSuccessPage = lazy(() => import('../features/payments/PaymentSuccessPage'))
+const OrdersPage = lazy(() => import('../features/orders/components/OrderManagementPage'));
+const TicketsPage = lazy(() => import('../features/tickets/components/TicketsPage'));
+const ResetPasswordPage = lazy(() => import('../features/auth/ResetPassword'));
 const ForgotPasswordPage = lazy(() => import('../features/auth/ForgotPassword'));
+const LandingPage = lazy(() => import('../features/landing/LandingPage'));
 
 const AppRoutes: React.FC = () => {
     return (
@@ -33,10 +33,11 @@ const AppRoutes: React.FC = () => {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/" element={<LandingPage />} />
 
             <Route element={<ProtectedRoute />}>
                 <Route element={<Layout />}>
-                    <Route path="/" element={<DashboardPage />} />
+                    <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/events" element={<EventListPage />} />
                     <Route path="/events/:eventId" element={<EventDetailsPage />} />
                     <Route path="/my-tickets" element={<MyTicketsPage />} />
