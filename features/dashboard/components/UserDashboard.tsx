@@ -23,6 +23,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { EventStatus, TicketStatus } from "@/types/common";
 import { TicketUserResponse } from "@/types/tickets";
+import { useTranslation } from "react-i18next";
 
 
 const UserDashboard: React.FC = () => {
@@ -110,6 +111,8 @@ const UserDashboard: React.FC = () => {
     };
   };
 
+  const { t } = useTranslation();
+
   // Loading skeleton
   if (isLoading) {
     return (
@@ -134,32 +137,32 @@ const UserDashboard: React.FC = () => {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Welcome, {user?.username.split(" ")[0]}! 👋
+          {t('userDashboard.welcome')} {user?.username.split(" ")[0]}! 👋
         </h1>
         <p className="mt-1 text-gray-600 dark:text-gray-400">
-          Your personal event hub and ticket management center.
+          {t('userDashboard.subtitle')}
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           icon={<TicketIcon className="h-6 w-6 text-primary-500" />}
-          title="Total Tickets"
+          title={t('userDashboard.totalTickets')}
           value={tickets.length}
         />
         <StatCard
           icon={<CalendarIcon className="h-6 w-6 text-blue-500" />}
-          title="Upcoming Events"
+          title={t('userDashboard.upcomingEvents')}
           value={stats.upcomingCount}
         />
         <StatCard
           icon={<CheckCircleIcon className="h-6 w-6 text-green-500" />}
-          title="Valid Tickets"
+          title={t('userDashboard.validTickets')}
           value={tickets.length}
         />
         <StatCard
           icon={<CurrencyDollarIcon className="h-6 w-6 text-purple-500" />}
-          title="Total Spent"
+          title={t('userDashboard.totalSpent')}
           value={`$${stats.totalSpent.toFixed(2)}`}
         />
       </div>
@@ -208,7 +211,7 @@ const UserDashboard: React.FC = () => {
       {recentTickets.length > 0 && (
         <div>
           <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
-            Recent Tickets
+            {t('userDashboard.recentTickets')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {recentTickets.map(ticket => {
@@ -248,7 +251,7 @@ const UserDashboard: React.FC = () => {
       {recommendedEvents.length > 0 && (
         <div>
           <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
-            Recommended For You
+            {t('userDashboard.recommendedForYou')}
           </h2>
           <div className="grid grid-cols-1 gap-4">
             {recommendedEvents.map(event => (

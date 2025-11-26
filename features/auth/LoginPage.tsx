@@ -137,7 +137,7 @@ const LoginPage: React.FC = () => {
                 transition={{ duration: 0.5 }}
                 className="w-full max-w-md z-10 px-4"
             >
-                <div className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 sm:p-10">
+                <div className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-6 sm:p-10">
                     <div className="text-center mb-10">
                         <motion.div
                             initial={{ scale: 0 }}

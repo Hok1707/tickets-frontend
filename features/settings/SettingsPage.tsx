@@ -5,23 +5,35 @@ import { useThemeStore } from '../../store/themeStore';
 import { userService } from '../../services/userService';
 import { authService } from '../../services/authService';
 import toast from 'react-hot-toast';
+import { motion, Variants } from 'framer-motion';
 import {
     UserCircleIcon, EnvelopeIcon, PhoneIcon,
-    ShieldCheckIcon, LockClosedIcon, EyeIcon, EyeSlashIcon,
-    PaintBrushIcon, SunIcon, MoonIcon, BriefcaseIcon
+    ShieldCheckIcon, KeyIcon, CameraIcon,
+    SunIcon, MoonIcon, BriefcaseIcon, PaintBrushIcon
 } from '@heroicons/react/24/outline';
 import { Role } from '../../types/common';
 import { useTranslation } from 'react-i18next';
 
-const ProfileSettings: React.FC = () => {
+const SettingsPage: React.FC = () => {
     const { user } = useAuth();
-    const { updateUserInfo } = useAuthStore();
+    const { updateUserInfo, updateUserRole } = useAuthStore();
+    const { theme, toggleTheme } = useThemeStore();
     const { t } = useTranslation();
+    const [activeTab, setActiveTab] = useState<'personal' | 'security' | 'account' | 'appearance'>('personal');
 
+    // Profile State
     const [username, setUsername] = useState(user?.username || '');
     const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || '');
-    const [isEditing, setIsEditing] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isProfileLoading, setIsProfileLoading] = useState(false);
+
+    // Password State
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [isPasswordLoading, setIsPasswordLoading] = useState(false);
+
+    // Role State
+    const [isRoleLoading, setIsRoleLoading] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -30,196 +42,51 @@ const ProfileSettings: React.FC = () => {
         }
     }, [user]);
 
-    const handleCancel = () => {
-        setIsEditing(false);
-        if (user) {
-            setUsername(user.username);
-            setPhoneNumber(user.phoneNumber || '');
-        }
-    };
-
     const handleProfileSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!user) return;
 
-        if (username === user.username && phoneNumber === (user.phoneNumber || '')) {
-            setIsEditing(false);
-            return;
-        }
-
-        setIsLoading(true);
+        setIsProfileLoading(true);
         try {
             const updatedUser = await userService.updateUserProfile(user.id, { username, phoneNumber });
             updateUserInfo({ username: updatedUser.username, phoneNumber: updatedUser.phoneNumber });
             toast.success(t('settings.profileUpdateSuccess'));
-            setIsEditing(false);
         } catch (error) {
             toast.error(t('settings.profileUpdateFail'));
-            handleCancel();
         } finally {
-            setIsLoading(false);
+            setIsProfileLoading(false);
         }
     };
 
-    return (
-        <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">{t('settings.personalInfo')}</h3>
-                <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{t('settings.personalInfoDesc')}</p>
-            </div>
-            <form onSubmit={handleProfileSubmit}>
-                <dl className="p-6 space-y-2">
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-1 py-3 border-b border-gray-100 dark:border-gray-700">
-                        <dt className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2"><UserCircleIcon className="h-5 w-5" />{t('settings.fullName')}</dt>
-                        <dd className="mt-1 text-sm text-gray-900 dark:text-white sm:col-span-2 sm:mt-0">
-                            {isEditing ? <input value={username} onChange={e => setUsername(e.target.value)} className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm py-2 px-3" /> : <span className="py-2 inline-block">{username}</span>}
-                        </dd>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-1 py-3 border-b border-gray-100 dark:border-gray-700">
-                        <dt className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2"><PhoneIcon className="h-5 w-5" />{t('settings.phoneNumber')}</dt>
-                        <dd className="mt-1 text-sm text-gray-900 dark:text-white sm:col-span-2 sm:mt-0">
-                            {isEditing ? <input value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm py-2 px-3" /> : <span className="py-2 inline-block">{phoneNumber || '-'}</span>}
-                        </dd>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-1 py-3">
-                        <dt className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2"><EnvelopeIcon className="h-5 w-5" />{t('settings.emailAddress')}</dt>
-                        <dd className="mt-1 text-sm text-gray-500 dark:text-gray-400 sm:col-span-2 sm:mt-0 py-2">{user?.email}</dd>
-                    </div>
-                </dl>
-                <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-4 p-6 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700 rounded-b-lg">
-                    {isEditing ? (
-                        <>
-                            <button type="button" onClick={handleCancel} disabled={isLoading} className="w-full sm:w-auto px-4 py-2 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500 transition-colors">{t('settings.cancel')}</button>
-                            <button type="submit" disabled={isLoading} className="w-full sm:w-auto px-6 py-2 rounded-md bg-primary-600 text-white hover:bg-primary-700 font-semibold disabled:bg-primary-400 dark:disabled:bg-primary-800 transition-colors">{isLoading ? t('settings.saving') : t('settings.saveChanges')}</button>
-                        </>
-                    ) : (
-                        <button type="button" onClick={() => setIsEditing(true)} className="w-full sm:w-auto px-6 py-2 rounded-md bg-primary-600 text-white hover:bg-primary-700 font-semibold transition-colors">{t('settings.editProfile')}</button>
-                    )}
-                </div>
-            </form>
-        </div>
-    );
-};
-
-const SecuritySettings: React.FC = () => {
-    const { user } = useAuth();
-    const { t } = useTranslation();
-    const [currentPassword, setCurrentPassword] = useState('');
-    const [newPassword, setNewPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [passwordError, setPasswordError] = useState('');
-    const [isPasswordLoading, setIsPasswordLoading] = useState(false);
-    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
     const handlePasswordSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setPasswordError('');
-
         if (newPassword !== confirmPassword) {
-            setPasswordError(t('settings.passwordMismatch'));
+            toast.error(t('settings.passwordMismatch'));
             return;
         }
-
         if (!user) return;
 
         setIsPasswordLoading(true);
         try {
             await authService.changePassword({
                 userId: user.id,
-                currentPassword: currentPassword,
-                newPassword: newPassword,
+                currentPassword,
+                newPassword,
             });
-
             toast.success(t('settings.passwordUpdateSuccess'));
             setCurrentPassword('');
             setNewPassword('');
             setConfirmPassword('');
         } catch (error) {
-            setPasswordError(error instanceof Error ? error.message : t('settings.passwordUpdateFail'));
+            toast.error(error instanceof Error ? error.message : t('settings.passwordUpdateFail'));
         } finally {
             setIsPasswordLoading(false);
         }
     };
 
-    return (
-        <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">{t('settings.changePassword')}</h3>
-                <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{t('settings.changePasswordDesc')}</p>
-            </div>
-            <form onSubmit={handlePasswordSubmit}>
-                <div className="p-6 space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('settings.currentPassword')}</label>
-                        <input type="password" value={currentPassword} onChange={(e) => { setCurrentPassword(e.target.value); setPasswordError('') }} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm py-2 px-3" />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('settings.newPassword')}</label>
-                        <div className="relative">
-                            <input type={isPasswordVisible ? 'text' : 'password'} value={newPassword} onChange={(e) => { setNewPassword(e.target.value); setPasswordError('') }} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm py-2 px-3" />
-                            <button type="button" onClick={() => setIsPasswordVisible(!isPasswordVisible)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 dark:text-gray-400">{isPasswordVisible ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}</button>
-                        </div>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('settings.confirmNewPassword')}</label>
-                        <input type="password" value={confirmPassword} onChange={(e) => { setConfirmPassword(e.target.value); setPasswordError('') }} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm py-2 px-3" />
-                    </div>
-                    {passwordError && <p className="text-sm text-red-600 dark:text-red-400">{passwordError}</p>}
-                </div>
-                <div className="flex justify-end p-6 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700 rounded-b-lg">
-                    <button type="submit" disabled={isPasswordLoading} className="px-6 py-2 rounded-md bg-primary-600 text-white hover:bg-primary-700 font-semibold disabled:bg-primary-400 dark:disabled:bg-primary-800 transition-colors">{isPasswordLoading ? t('settings.saving') : t('settings.updatePassword')}</button>
-                </div>
-            </form>
-        </div>
-    );
-};
-
-const AppearanceSettings: React.FC = () => {
-    const { theme, toggleTheme } = useThemeStore();
-    const { t } = useTranslation();
-
-    return (
-        <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">{t('settings.appearance')}</h3>
-                <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{t('settings.appearanceDesc')}</p>
-            </div>
-            <div className="p-6">
-                <label className="text-base font-medium text-gray-900 dark:text-white">{t('settings.theme')}</label>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{t('settings.themeDesc')}</p>
-                <fieldset className="mt-4">
-                    <legend className="sr-only">Theme selection</legend>
-                    <div className="flex items-center space-x-4">
-                        <label className={`relative w-full p-4 rounded-lg cursor-pointer border-2 ${theme === 'light' ? 'border-primary-500 ring-2 ring-primary-500' : 'border-gray-300 dark:border-gray-600'}`}>
-                            <input type="radio" name="theme-option" value="light" className="sr-only" checked={theme === 'light'} onChange={toggleTheme} aria-labelledby="theme-light-label" />
-                            <div className="flex items-center gap-4">
-                                <SunIcon className="h-6 w-6 text-gray-700" />
-                                <span id="theme-light-label" className="font-medium text-gray-700">{t('settings.light')}</span>
-                            </div>
-                        </label>
-                        <label className={`relative w-full p-4 rounded-lg cursor-pointer border-2 ${theme === 'dark' ? 'border-primary-500 ring-2 ring-primary-500' : 'border-gray-300 dark:border-gray-600'}`}>
-                            <input type="radio" name="theme-option" value="dark" className="sr-only" checked={theme === 'dark'} onChange={toggleTheme} aria-labelledby="theme-dark-label" />
-                            <div className="flex items-center gap-4">
-                                <MoonIcon className="h-6 w-6 text-yellow-400" />
-                                <span id="theme-dark-label" className="font-medium text-gray-900 dark:text-white">{t('settings.dark')}</span>
-                            </div>
-                        </label>
-                    </div>
-                </fieldset>
-            </div>
-        </div>
-    );
-};
-
-const AccountSettings: React.FC = () => {
-    const { user } = useAuth();
-    const { updateUserRole } = useAuthStore();
-    const { t } = useTranslation();
-    const [isLoading, setIsLoading] = useState(false);
-
     const handleUpgradeToOrganizer = async () => {
         if (!user) return;
-        setIsLoading(true);
+        setIsRoleLoading(true);
         try {
             await userService.updateUserRole(user.id, Role.ORGANIZER);
             updateUserRole(user.id, Role.ORGANIZER);
@@ -227,90 +94,301 @@ const AccountSettings: React.FC = () => {
         } catch (error) {
             toast.error(t('settings.upgradeFail'));
         } finally {
-            setIsLoading(false);
+            setIsRoleLoading(false);
         }
     };
 
-    if (!user) return null;
+    const containerVariants: Variants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+    };
+
+    const tabVariants: Variants = {
+        hidden: { opacity: 0, x: -20 },
+        visible: { opacity: 1, x: 0, transition: { duration: 0.3 } },
+    };
 
     return (
-        <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">{t('settings.accountType')}</h3>
-                <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{t('settings.manageRole')}</p>
-            </div>
-            <div className="p-6">
-                <div className="flex items-center justify-between p-4 border rounded-lg dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-                    <div>
-                        <h4 className="text-lg font-medium text-gray-900 dark:text-white">{t('settings.currentRole')}</h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            {t('settings.youAreCurrently')} <span className="font-semibold text-primary-600 dark:text-primary-400">{user.role}</span>.
-                        </p>
-                    </div>
-                    {user.role === Role.USER && (
-                        <button
-                            onClick={handleUpgradeToOrganizer}
-                            disabled={isLoading}
-                            className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {isLoading ? t('settings.upgrading') : t('settings.upgradeToOrganizer')}
-                        </button>
-                    )}
-                    {user.role === Role.ORGANIZER && (
-                        <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium dark:bg-green-900/30 dark:text-green-400">
-                            {t('settings.organizerAccount')}
-                        </span>
-                    )}
+        <motion.div
+            className="mx-auto max-w-5xl p-4 md:p-6 2xl:p-10"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+        >
+            {/* Profile Header */}
+            <div className="relative mb-6 h-48 rounded-xl bg-gradient-to-r from-primary to-purple-600 shadow-lg overflow-hidden">
+                <div className="absolute inset-0 bg-black/10"></div>
+                <div className="absolute bottom-4 right-4 z-10">
+                    <button className="flex items-center gap-2 rounded-lg bg-white/20 px-4 py-2 text-white hover:bg-white/30 backdrop-blur-md transition-all">
+                        <CameraIcon className="h-5 w-5" />
+                        <span className="text-sm font-medium">Edit Cover</span>
+                    </button>
                 </div>
-                {user.role === Role.USER && (
-                    <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
-                        {t('settings.becomeOrganizerDesc')}
-                    </p>
+            </div>
+
+            <div className="px-4 pb-6 lg:pb-8 xl:pb-11.5 relative">
+                <div className="relative mx-auto -mt-24 h-32 w-32 rounded-full bg-background p-1.5 shadow-xl sm:h-40 sm:w-40 sm:p-2">
+                    <div className="relative h-full w-full rounded-full overflow-hidden">
+                        {user?.username ? (
+                            <div className="flex h-full w-full items-center justify-center bg-primary text-4xl font-bold text-primary-foreground sm:text-6xl">
+                                {user.username.charAt(0).toUpperCase()}
+                            </div>
+                        ) : (
+                            <UserCircleIcon className="h-full w-full text-muted-foreground bg-muted" />
+                        )}
+                        <label
+                            htmlFor="profile"
+                            className="absolute bottom-0 right-0 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md transition-colors"
+                        >
+                            <CameraIcon className="h-4 w-4" />
+                            <input
+                                type="file"
+                                name="profile"
+                                id="profile"
+                                className="sr-only"
+                            />
+                        </label>
+                    </div>
+                </div>
+
+                <div className="mt-4 text-center">
+                    <h3 className="mb-1 text-2xl font-bold text-foreground">
+                        {user?.username}
+                    </h3>
+                    <p className="font-medium text-muted-foreground">{user?.role}</p>
+                </div>
+            </div>
+
+            {/* Tabs */}
+            <div className="mb-6 flex flex-wrap gap-6 border-b border-border">
+                {[
+                    { id: 'personal', label: t('settings.personalInfo') },
+                    { id: 'security', label: t('settings.security') },
+                    { id: 'account', label: t('settings.account') },
+                    { id: 'appearance', label: t('settings.appearance') }
+                ].map((tab) => (
+                    <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id as any)}
+                        className={`border-b-2 pb-3 text-sm font-medium transition-colors ${activeTab === tab.id ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
+                            }`}
+                    >
+                        {tab.label}
+                    </button>
+                ))}
+            </div>
+
+            {/* Content */}
+            <div className="rounded-xl border border-border bg-card shadow-sm">
+                {activeTab === 'personal' && (
+                    <motion.div
+                        variants={tabVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="p-6 sm:p-8"
+                    >
+                        <form onSubmit={handleProfileSubmit}>
+                            <div className="mb-6 flex flex-col gap-6 sm:flex-row">
+                                <div className="w-full sm:w-1/2">
+                                    <label className="mb-2 block text-sm font-medium text-foreground" htmlFor="fullName">
+                                        {t('settings.fullName')}
+                                    </label>
+                                    <div className="relative">
+                                        <span className="absolute left-3 top-3">
+                                            <UserCircleIcon className="h-5 w-5 text-muted-foreground" />
+                                        </span>
+                                        <input
+                                            className="w-full rounded-lg border border-input bg-background py-2.5 pl-10 pr-4 text-foreground focus:border-primary focus:ring-1 focus:ring-primary focus-visible:outline-none"
+                                            type="text"
+                                            value={username}
+                                            onChange={(e) => setUsername(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="w-full sm:w-1/2">
+                                    <label className="mb-2 block text-sm font-medium text-foreground" htmlFor="phoneNumber">
+                                        {t('settings.phoneNumber')}
+                                    </label>
+                                    <div className="relative">
+                                        <span className="absolute left-3 top-3">
+                                            <PhoneIcon className="h-5 w-5 text-muted-foreground" />
+                                        </span>
+                                        <input
+                                            className="w-full rounded-lg border border-input bg-background py-2.5 pl-10 pr-4 text-foreground focus:border-primary focus:ring-1 focus:ring-primary focus-visible:outline-none"
+                                            type="text"
+                                            value={phoneNumber}
+                                            onChange={(e) => setPhoneNumber(e.target.value)}
+                                            placeholder="+123 456 7890"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mb-6">
+                                <label className="mb-2 block text-sm font-medium text-foreground" htmlFor="emailAddress">
+                                    {t('settings.emailAddress')}
+                                </label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-3">
+                                        <EnvelopeIcon className="h-5 w-5 text-muted-foreground" />
+                                    </span>
+                                    <input
+                                        className="w-full rounded-lg border border-input bg-muted py-2.5 pl-10 pr-4 text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary focus-visible:outline-none cursor-not-allowed"
+                                        type="email"
+                                        defaultValue={user?.email}
+                                        readOnly
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex justify-end gap-4">
+                                <button
+                                    className="rounded-lg bg-primary px-6 py-2.5 font-medium text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm disabled:opacity-70"
+                                    type="submit"
+                                    disabled={isProfileLoading}
+                                >
+                                    {isProfileLoading ? t('settings.saving') : t('settings.saveChanges')}
+                                </button>
+                            </div>
+                        </form>
+                    </motion.div>
+                )}
+
+                {activeTab === 'security' && (
+                    <motion.div
+                        variants={tabVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="p-6 sm:p-8"
+                    >
+                        <h4 className="mb-6 text-lg font-semibold text-foreground">{t('settings.changePassword')}</h4>
+                        <form onSubmit={handlePasswordSubmit}>
+                            <div className="mb-6">
+                                <label className="mb-2 block text-sm font-medium text-foreground">
+                                    {t('settings.currentPassword')}
+                                </label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-3">
+                                        <KeyIcon className="h-5 w-5 text-muted-foreground" />
+                                    </span>
+                                    <input
+                                        className="w-full rounded-lg border border-input bg-background py-2.5 pl-10 pr-4 text-foreground focus:border-primary focus:ring-1 focus:ring-primary focus-visible:outline-none"
+                                        type="password"
+                                        value={currentPassword}
+                                        onChange={(e) => setCurrentPassword(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div className="mb-6">
+                                <label className="mb-2 block text-sm font-medium text-foreground">
+                                    {t('settings.newPassword')}
+                                </label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-3">
+                                        <ShieldCheckIcon className="h-5 w-5 text-muted-foreground" />
+                                    </span>
+                                    <input
+                                        className="w-full rounded-lg border border-input bg-background py-2.5 pl-10 pr-4 text-foreground focus:border-primary focus:ring-1 focus:ring-primary focus-visible:outline-none"
+                                        type="password"
+                                        value={newPassword}
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div className="mb-6">
+                                <label className="mb-2 block text-sm font-medium text-foreground">
+                                    {t('settings.confirmNewPassword')}
+                                </label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-3">
+                                        <ShieldCheckIcon className="h-5 w-5 text-muted-foreground" />
+                                    </span>
+                                    <input
+                                        className="w-full rounded-lg border border-input bg-background py-2.5 pl-10 pr-4 text-foreground focus:border-primary focus:ring-1 focus:ring-primary focus-visible:outline-none"
+                                        type="password"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex justify-end gap-4">
+                                <button
+                                    className="rounded-lg bg-primary px-6 py-2.5 font-medium text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm disabled:opacity-70"
+                                    type="submit"
+                                    disabled={isPasswordLoading}
+                                >
+                                    {isPasswordLoading ? t('settings.saving') : t('settings.updatePassword')}
+                                </button>
+                            </div>
+                        </form>
+                    </motion.div>
+                )}
+
+                {activeTab === 'account' && (
+                    <motion.div
+                        variants={tabVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="p-6 sm:p-8"
+                    >
+                        <h4 className="mb-6 text-lg font-semibold text-foreground">{t('settings.accountType')}</h4>
+                        <div className="flex items-center justify-between p-4 rounded-lg border border-border bg-background/50">
+                            <div>
+                                <h4 className="text-lg font-medium text-foreground">{t('settings.currentRole')}</h4>
+                                <p className="text-sm text-muted-foreground mt-1">
+                                    {t('settings.youAreCurrently')} <span className="font-semibold text-primary">{user?.role}</span>.
+                                </p>
+                            </div>
+                            {user?.role === Role.USER && (
+                                <button
+                                    onClick={handleUpgradeToOrganizer}
+                                    disabled={isRoleLoading}
+                                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                                >
+                                    {isRoleLoading ? t('settings.upgrading') : t('settings.upgradeToOrganizer')}
+                                </button>
+                            )}
+                            {user?.role === Role.ORGANIZER && (
+                                <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium dark:bg-green-900/30 dark:text-green-400">
+                                    {t('settings.organizerAccount')}
+                                </span>
+                            )}
+                        </div>
+                    </motion.div>
+                )}
+
+                {activeTab === 'appearance' && (
+                    <motion.div
+                        variants={tabVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="p-6 sm:p-8"
+                    >
+                        <h4 className="mb-6 text-lg font-semibold text-foreground">{t('settings.appearance')}</h4>
+                        <div className="flex items-center space-x-4">
+                            <label className={`relative w-full p-4 rounded-lg cursor-pointer border-2 transition-all ${theme === 'light' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}>
+                                <input type="radio" name="theme-option" value="light" className="sr-only" checked={theme === 'light'} onChange={toggleTheme} />
+                                <div className="flex items-center gap-4">
+                                    <SunIcon className="h-6 w-6 text-orange-500" />
+                                    <span className="font-medium text-foreground">{t('settings.light')}</span>
+                                </div>
+                            </label>
+                            <label className={`relative w-full p-4 rounded-lg cursor-pointer border-2 transition-all ${theme === 'dark' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}>
+                                <input type="radio" name="theme-option" value="dark" className="sr-only" checked={theme === 'dark'} onChange={toggleTheme} />
+                                <div className="flex items-center gap-4">
+                                    <MoonIcon className="h-6 w-6 text-primary" />
+                                    <span className="font-medium text-foreground">{t('settings.dark')}</span>
+                                </div>
+                            </label>
+                        </div>
+                    </motion.div>
                 )}
             </div>
-        </div>
-    );
-};
-
-const SettingsPage: React.FC = () => {
-    const [activeTab, setActiveTab] = useState('profile');
-    const { t } = useTranslation();
-
-    const tabs = [
-        { id: 'profile', name: t('settings.profile'), icon: UserCircleIcon, component: <ProfileSettings /> },
-        { id: 'security', name: t('settings.security'), icon: ShieldCheckIcon, component: <SecuritySettings /> },
-        { id: 'appearance', name: t('settings.appearance'), icon: PaintBrushIcon, component: <AppearanceSettings /> },
-        { id: 'account', name: t('settings.account'), icon: BriefcaseIcon, component: <AccountSettings /> },
-    ];
-
-    const activeComponent = tabs.find(tab => tab.id === activeTab)?.component;
-
-    return (
-        <div className="max-w-5xl mx-auto">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">{t('settings.title')}</h1>
-            <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
-                <aside className="md:w-1/4 lg:w-1/5">
-                    <nav className="space-y-1">
-                        {tabs.map(tab => (
-                            <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md text-left transition-colors duration-200 ${activeTab === tab.id
-                                    ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300'
-                                    : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700/50'
-                                    }`}
-                            >
-                                <tab.icon className="h-5 w-5 flex-shrink-0" />
-                                <span className="truncate">{tab.name}</span>
-                            </button>
-                        ))}
-                    </nav>
-                </aside>
-                <main className="flex-1">
-                    {activeComponent}
-                </main>
-            </div>
-        </div>
+        </motion.div>
     );
 };
 

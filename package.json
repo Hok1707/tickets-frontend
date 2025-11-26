@@ -11,6 +11,7 @@
   "dependencies": {
     "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
+    "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-slot": "^1.2.4",
     "@tailwindcss/vite": "^4.1.17",
     "axios": "^1.12.2",
@@ -25,6 +26,7 @@
     "qrcode.react": "^4.2.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-hook-form": "^7.66.1",
     "react-hot-toast": "^2.6.0",
     "react-i18next": "^16.3.5",
     "react-qr-code": "^2.0.18",
@@ -32,6 +34,7 @@
     "recharts": "^2.12.7",
     "tailwind-merge": "^3.4.0",
     "yup": "^1.7.1",
+    "zod": "^4.1.13",
     "zustand": "^5.0.8"
   },
   "devDependencies": {

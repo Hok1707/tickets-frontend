@@ -4,17 +4,16 @@ import { useAuthStore } from "@/store/authStore";
 import { useThemeStore } from "@/store/themeStore";
 import { useCartStore } from "@/store/cartStore";
 import {
-  SunIcon,
-  MoonIcon,
   UserCircleIcon,
   ArrowRightOnRectangleIcon,
   Bars3Icon,
   Cog6ToothIcon,
   ShoppingCartIcon,
-  GlobeAltIcon,
 } from "@heroicons/react/24/outline";
 import ConfirmationModal from "@/components/common/ConfirmationModal";
 import { useTranslation } from "react-i18next";
+import ThemeToggle from "@/components/common/ThemeToggle";
+import LanguageToggle from "@/components/common/LanguageToggle";
 
 interface HeaderProps {
   sidebarOpen: boolean;
@@ -75,10 +74,7 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
     setIsLogoutModalOpen(true);
   };
 
-  const toggleLanguage = () => {
-    const newLang = i18n.language === 'en' ? 'km' : 'en';
-    i18n.changeLanguage(newLang);
-  };
+
 
   const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -114,25 +110,10 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
               </Link>
 
               {/* Language Toggle */}
-              <button
-                onClick={toggleLanguage}
-                className="flex items-center gap-1 px-3 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
-                <GlobeAltIcon className="h-5 w-5" />
-                <span>{i18n.language === 'en' ? 'EN' : 'KH'}</span>
-              </button>
+              <LanguageToggle />
 
               {/* Theme Toggle */}
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
-              >
-                {theme === "light" ? (
-                  <MoonIcon className="h-6 w-6 text-gray-700" />
-                ) : (
-                  <SunIcon className="h-6 w-6 text-yellow-400" />
-                )}
-              </button>
+              <ThemeToggle />
 
               {/* User Dropdown */}
               <div className="relative">

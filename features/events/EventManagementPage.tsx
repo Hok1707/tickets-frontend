@@ -32,29 +32,29 @@ const EventManagementPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<EventStatus | "All">("All");
   const { role } = useAuth();
-const fetchEvents = useCallback(async () => {
-  if (!role) return;
+  const fetchEvents = useCallback(async () => {
+    if (!role) return;
 
-  setIsLoading(true);
-  try {
-    let response: PaginatedResponse<Events>;
-    if (role === Role.ORGANIZER) {
-      response = await eventService.getEventsByOranizer();
-    } else {
-      response = await eventService.getEventsAdmin();
+    setIsLoading(true);
+    try {
+      let response: PaginatedResponse<Events>;
+      if (role === Role.ORGANIZER) {
+        response = await eventService.getEventsByOranizer();
+      } else {
+        response = await eventService.getEventsAdmin();
+      }
+      setEvents(response.items);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+      toast.error("Failed to fetch events.");
+    } finally {
+      setIsLoading(false);
     }
-    setEvents(response.items);
-  } catch (error) {
-    console.error("Error fetching events:", error);
-    toast.error("Failed to fetch events.");
-  } finally {
-    setIsLoading(false);
-  }
-}, [role]);
+  }, [role]);
 
-useEffect(() => {
-  fetchEvents();
-}, [fetchEvents]);
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
 
   const openModal = (event: Events | null = null) => {
     setSelectedEvent(
@@ -81,10 +81,7 @@ useEffect(() => {
   };
 
   const handleSaveEvent = async (eventData: Events) => {
-    if (!eventData.name || !eventData.venue) {
-      toast.error("Please fill in all required fields.");
-      return;
-    }
+
 
     const payload = {
       ...eventData,
@@ -136,7 +133,7 @@ useEffect(() => {
   // Filter events based on search and status
   const filteredEvents = useMemo(() => {
     return events.filter((event) => {
-      const matchesSearch = 
+      const matchesSearch =
         event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         event.venue.toLowerCase().includes(searchTerm.toLowerCase()) ||
         event.description?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -314,9 +311,8 @@ useEffect(() => {
                   <img
                     src={event.imageUrl}
                     alt={event.name}
-                    className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${
-                      event.status !== EventStatus.PUBLISHED ? "grayscale opacity-70" : ""
-                    }`}
+                    className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${event.status !== EventStatus.PUBLISHED ? "grayscale opacity-70" : ""
+                      }`}
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center">

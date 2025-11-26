@@ -148,5 +148,219 @@
         "themeDesc": "Select your preferred interface theme.",
         "light": "Light",
         "dark": "Dark"
+    },
+    "userDashboard": {
+        "welcome": "Welcome,",
+        "subtitle": "Your personal event hub and ticket management center.",
+        "totalTickets": "Total Tickets",
+        "upcomingEvents": "Upcoming Events",
+        "validTickets": "Valid Tickets",
+        "totalSpent": "Total Spent",
+        "recentTickets": "Recent Tickets",
+        "recommendedForYou": "Recommended For You",
+        "noTickets": "No tickets found",
+        "noRecommendations": "No recommendations available"
+    },
+    "pricingPage": {
+        "title": "Simple, Transparent Pricing",
+        "subtitle": "Choose the plan that fits your needs. No hidden fees. Cancel anytime.",
+        "mostPopular": "Most Popular",
+        "starter": {
+            "title": "Starter",
+            "description": "Perfect for small events and meetups.",
+            "cta": "Get Started Free",
+            "features": [
+                "Up to 100 tickets/month",
+                "Basic analytics",
+                "Standard support",
+                "Mobile check-in app"
+            ]
+        },
+        "professional": {
+            "title": "Professional",
+            "description": "For growing event organizers.",
+            "cta": "Start Free Trial",
+            "period": "/month",
+            "features": [
+                "Unlimited tickets",
+                "Advanced analytics",
+                "Priority support",
+                "Custom branding",
+                "Export data",
+                "Multiple organizers"
+            ]
+        },
+        "enterprise": {
+            "title": "Enterprise",
+            "description": "For large scale events and organizations.",
+            "cta": "Contact Sales",
+            "price": "Custom",
+            "features": [
+                "Dedicated account manager",
+                "API access",
+                "SLA support",
+                "White-label solution",
+                "Custom integration",
+                "On-site support"
+            ]
+        }
+    },
+    "aboutPage": {
+        "title": "About TicketFlow",
+        "mission": "TicketFlow is on a mission to democratize event management. We believe that organizing an event should be as exciting as attending one.",
+        "story": {
+            "joinUs": {
+                "title": "Join Us",
+                "content": "We are a diverse team of passionate individuals working together to shape the future of events. We're always looking for talented people to join our mission.",
+                "cta": "View Open Positions →"
+            }
+        }
+    },
+    "securityPage": {
+        "title": "Security at TicketFlow",
+        "description": "Your data security is our top priority. We use bank-grade encryption and industry-leading security practices to keep your information safe.",
+        "encryption": {
+            "title": "Data Encryption",
+            "description": "All data transmitted between your device and our servers is encrypted using TLS 1.2+ protocols. Sensitive data at rest is encrypted using AES-256."
+        },
+        "compliance": {
+            "title": "Compliance & Standards",
+            "description": "We adhere to GDPR, CCPA, and other global data privacy regulations. Our infrastructure is SOC 2 Type II compliant."
+        },
+        "infrastructure": {
+            "title": "Secure Infrastructure",
+            "description": "Our servers are hosted in world-class data centers (AWS) with 24/7 monitoring, biometric access controls, and redundant power systems."
+        },
+        "monitoring": {
+            "title": "Continuous Monitoring",
+            "description": "We perform regular automated security scans, third-party penetration testing, and 24/7 threat monitoring to identify and block attacks."
+        },
+        "trustedBy": {
+            "title": "Trusted by Security-Conscious Teams",
+            "uptime": "99.99% Uptime",
+            "support": "24/7 Support",
+            "backups": "Daily Backups",
+            "fraudProtection": "Fraud Protection"
+        }
+    },
+    "blogPage": {
+        "title": "TicketFlow Blog",
+        "subtitle": "Insights, tips, and news from the event industry."
+    },
+    "careersPage": {
+        "title": "Join Our Team",
+        "subtitle": "We're building the future of event management. Come help us create experiences that bring people together.",
+        "openPositions": "Open Positions",
+        "rolesAvailable": "roles available",
+        "applyNow": "Apply Now",
+        "noRole": {
+            "title": "Don't see the right role?",
+            "description": "We're always looking for talented people. Send us your resume and we'll keep you in mind.",
+            "cta": "Email Us"
+        }
+    },
+    "privacyPage": {
+        "title": "Privacy Policy",
+        "lastUpdated": "Last updated: November 24, 2024",
+        "intro": {
+            "title": "1. Introduction",
+            "content": "Welcome to TicketFlow. We respect your privacy and are committed to protecting your personal data. This privacy policy will inform you as to how we look after your personal data when you visit our website and tell you about your privacy rights and how the law protects you."
+        },
+        "dataCollect": {
+            "title": "2. Data We Collect",
+            "content": "We may collect, use, store and transfer different kinds of personal data about you which we have grouped together follows:",
+            "identity": "Identity Data includes first name, last name, username or similar identifier.",
+            "contact": "Contact Data includes billing address, delivery address, email address and telephone numbers.",
+            "financial": "Financial Data includes bank account and payment card details.",
+            "transaction": "Transaction Data includes details about payments to and from you and other details of products and services you have purchased from us."
+        },
+        "dataUse": {
+            "title": "3. How We Use Your Data",
+            "content": "We will only use your personal data when the law allows us to. Most commonly, we will use your personal data in the following circumstances:",
+            "contract": "Where we need to perform the contract we are about to enter into or have entered into with you.",
+            "legitimate": "Where it is necessary for our legitimate interests (or those of a third party) and your interests and fundamental rights do not override those interests.",
+            "legal": "Where we need to comply with a legal or regulatory obligation."
+        },
+        "security": {
+            "title": "4. Data Security",
+            "content": "We have put in place appropriate security measures to prevent your personal data from being accidentally lost, used or accessed in an unauthorized way, altered or disclosed. In addition, we limit access to your personal data to those employees, agents, contractors and other third parties who have a business need to know."
+        },
+        "contact": {
+            "title": "5. Contact Us",
+            "content": "If you have any questions about this privacy policy or our privacy practices, please contact us at privacy@ticketflow.com."
+        }
+    },
+    "termsPage": {
+        "title": "Terms of Service",
+        "lastUpdated": "Last updated: November 24, 2024",
+        "agreement": {
+            "title": "1. Agreement to Terms",
+            "content": "By accessing or using our website, you agree to be bound by these Terms of Service and our Privacy Policy. If you do not agree to these terms, please do not use our services."
+        },
+        "use": {
+            "title": "2. Use of Services",
+            "content": "You represent and warrant that you are at least 18 years of age and have the legal capacity to enter into this agreement. You agree not to use the services for any illegal or unauthorized purpose."
+        },
+        "accounts": {
+            "title": "3. User Accounts",
+            "content": "When you create an account with us, you must provide us information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account on our Service."
+        },
+        "ip": {
+            "title": "4. Intellectual Property",
+            "content": "The Service and its original content, features and functionality are and will remain the exclusive property of TicketFlow and its licensors. The Service is protected by copyright, trademark, and other laws of both the Country and foreign countries."
+        },
+        "termination": {
+            "title": "5. Termination",
+            "content": "We may terminate or suspend your account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms."
+        },
+        "liability": {
+            "title": "6. Limitation of Liability",
+            "content": "In no event shall TicketFlow, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service."
+        },
+        "changes": {
+            "title": "7. Changes to Terms",
+            "content": "We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material we will try to provide at least 30 days notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion."
+        },
+        "contact": {
+            "title": "8. Contact Us",
+            "content": "If you have any questions about these Terms, please contact us at support@ticketflow.com."
+        }
+    },
+    "organizerDashboard": {
+        "welcome": "Welcome,",
+        "subtitle": "Manage your events, track ticket sales, and monitor your financial performance.",
+        "totalEvents": "Total Events",
+        "ticketsSold": "Tickets Sold",
+        "published": "Published",
+        "totalCapacity": "Total Capacity",
+        "financialOverview": "Financial Overview",
+        "financialSubtitle": "Track revenue, expenses, and profitability",
+        "totalIncome": "Total Income",
+        "totalExpenses": "Total Expenses",
+        "netProfit": "Net Profit",
+        "estTaxes": "Est. Taxes (20%)",
+        "performance": "Performance Over Time",
+        "performanceSubtitle": "Income, expenses, and profit trends",
+        "noFinancialData": "No financial data available",
+        "selectDateRange": "Select a date range to view financial trends",
+        "quickActions": "Quick Actions",
+        "quickActionsSubtitle": "Common tasks for event management",
+        "manageEvents": "Manage Events",
+        "manageEventsDesc": "View, edit, and manage all your events",
+        "createEvent": "Create Event",
+        "createEventDesc": "Create a new event and start selling tickets",
+        "scanVerify": "Scan & Verify Tickets",
+        "scanVerifyDesc": "Quick access to ticket scanning and verification",
+        "eventStatusSummary": "Event Status Summary",
+        "draft": "Draft",
+        "completed": "Completed",
+        "total": "Total"
+    },
+    "staffDashboard": {
+        "welcome": "Welcome,",
+        "subtitle": "Ready to help check in attendees.",
+        "ticketScanner": "Ticket Scanner",
+        "description": "Use the ticket scanner to quickly and securely check in attendees at your event.",
+        "startScanning": "Start Scanning"
     }
 }

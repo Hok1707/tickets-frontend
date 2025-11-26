@@ -1,8 +1,34 @@
-import React, { useEffect, useState } from "react";
-import { useEventStore } from "@/store/eventStore";
+import React, { useEffect } from "react";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { EventStatus } from "@/types/common";
 import { Events } from "@/types/events";
-import { TicketType } from "@/types/tickets";
+
+// Zod Schema Validation
+const ticketTypeSchema = z.object({
+  name: z.string().min(1, "Ticket name is required"),
+  price: z.number().min(0, "Price must be non-negative"),
+  totalAvailable: z.number().min(1, "Quantity must be at least 1"),
+  description: z.string().optional(),
+});
+
+const eventSchema = z.object({
+  name: z.string().min(3, "Event name must be at least 3 characters"),
+  venue: z.string().min(3, "Venue must be at least 3 characters"),
+  description: z.string().optional(),
+  imageUrl: z.string().url("Invalid image URL").optional().or(z.literal("")),
+  start: z.string().refine((val) => !isNaN(Date.parse(val)), "Invalid start date"),
+  end: z.string().refine((val) => !isNaN(Date.parse(val)), "Invalid end date"),
+  capacity: z.number().min(1, "Capacity must be at least 1"),
+  status: z.nativeEnum(EventStatus),
+  ticketTypes: z.array(ticketTypeSchema).min(1, "At least one ticket type is required"),
+}).refine((data) => new Date(data.end) > new Date(data.start), {
+  message: "End date must be after start date",
+  path: ["end"],
+});
+
+type EventFormValues = z.infer<typeof eventSchema>;
 
 interface EventModalProps {
   event?: Events;
@@ -12,26 +38,61 @@ interface EventModalProps {
 
 const EventModal: React.FC<EventModalProps> = ({ event, onClose, onSave }) => {
   const {
-    selectedEvent,
-    setSelectedEvent,
-    updateEventField,
-    addTicketType,
-    updateTicketType,
-    removeTicketType,
-  } = useEventStore();
+    register,
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<EventFormValues>({
+    resolver: zodResolver(eventSchema),
+    defaultValues: {
+      name: "",
+      venue: "",
+      description: "",
+      imageUrl: "",
+      start: "",
+      end: "",
+      capacity: 0,
+      status: EventStatus.DRAFT,
+      ticketTypes: [],
+    },
+  });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [ticketErrors, setTicketErrors] = useState<Record<number, Record<string, string>>>({});
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "ticketTypes",
+  });
 
+  // Watch ticket types to calculate revenue
+  const watchedTicketTypes = watch("ticketTypes");
+  const totalRevenue = watchedTicketTypes?.reduce(
+    (sum, t) => sum + (Number(t.price) || 0) * (Number(t.totalAvailable) || 0),
+    0
+  ) || 0;
+
+  // Initialize form with event data
   useEffect(() => {
     if (event) {
-      setSelectedEvent({
-        ...event,
-        ticketTypes: event.ticketTypes || [],
+      reset({
+        name: event.name || "",
+        venue: event.venue || "",
+        description: event.description || "",
+        imageUrl: event.imageUrl || "",
+        start: event.start || "",
+        end: event.end || "",
+        capacity: event.capacity || 0,
         status: event.status || EventStatus.DRAFT,
+        ticketTypes: event.ticketTypes?.map(t => ({
+          name: t.name,
+          price: Number(t.price),
+          totalAvailable: Number(t.totalAvailable),
+          description: t.description || ""
+        })) || [],
       });
     } else {
-      setSelectedEvent({
+      reset({
         name: "",
         venue: "",
         description: "",
@@ -39,108 +100,48 @@ const EventModal: React.FC<EventModalProps> = ({ event, onClose, onSave }) => {
         start: "",
         end: "",
         capacity: 0,
-        ticketTypes: [],
         status: EventStatus.DRAFT,
-        id: "",
-        organizerId: "",
+        ticketTypes: [],
       });
     }
-  }, [event, setSelectedEvent]);
-
-  if (!selectedEvent) return null;
+  }, [event, reset]);
 
   const formatDateTimeLocal = (iso?: string) => {
     if (!iso) return "";
     const d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
     const offset = d.getTimezoneOffset() * 60000;
     return new Date(d.getTime() - offset).toISOString().slice(0, 16);
   };
 
   const handleDateChange = (field: "start" | "end", value: string) => {
     const date = new Date(value);
-    if (!isNaN(date.getTime())) updateEventField(field, date.toISOString());
-  };
-
-  const handleSave = async () => {
-    setErrors({});
-    setTicketErrors({});
-
-    try {
-      const payload: Partial<Events> = {
-        ...selectedEvent,
-        id: selectedEvent.id || undefined,
-        capacity: Number(selectedEvent.capacity) || 0,
-        ticketTypes: selectedEvent.ticketTypes.map((t) => ({
-          name: t.name,
-          description: t.description || "",
-          price: Number(t.price) || 0,
-          totalAvailable: Number(t.totalAvailable) || 0,
-        })),
-      };
-
-      const res = await onSave(payload as Events);
-
-      if (res?.status === 400 && res?.fieldErrors) {
-        const parsed: Record<string, string> = {};
-        const parsedTickets: Record<number, Record<string, string>> = {};
-
-        res.fieldErrors.forEach((e: any) => {
-          if (e.field.startsWith("ticketTypes")) {
-            const match = e.field.match(/ticketTypes\[(\d+)\]\.(.+)/);
-            if (match) {
-              const index = Number(match[1]);
-              const field = match[2];
-              if (!parsedTickets[index]) parsedTickets[index] = {};
-              parsedTickets[index][field] = e.message;
-            }
-          } else {
-            parsed[e.field] = e.message;
-          }
-        });
-
-        setErrors(parsed);
-        setTicketErrors(parsedTickets);
-      } else if (res?.error) {
-        setErrors({ global: res.message || "Something went wrong" });
-      } else {
-        setErrors({});
-        setTicketErrors({});
-        onClose();
-      }
-    } catch (err: any) {
-      if (err.response?.data?.fieldErrors) {
-        const parsed: Record<string, string> = {};
-        const parsedTickets: Record<number, Record<string, string>> = {};
-
-        err.response.data.fieldErrors.forEach((e: any) => {
-          if (e.field.startsWith("ticketTypes")) {
-            const match = e.field.match(/ticketTypes\[(\d+)\]\.(.+)/);
-            if (match) {
-              const index = Number(match[1]);
-              const field = match[2];
-              if (!parsedTickets[index]) parsedTickets[index] = {};
-              parsedTickets[index][field] = e.message;
-            }
-          } else {
-            parsed[e.field] = e.message;
-          }
-        });
-
-        setErrors(parsed);
-        setTicketErrors(parsedTickets);
-      } else {
-        setErrors({ global: err.message || "Something went wrong" });
-      }
+    if (!isNaN(date.getTime())) {
+      setValue(field, date.toISOString(), { shouldValidate: true });
     }
   };
 
-  const getError = (f: string) =>
-    errors[f] && <p className="text-red-500 text-sm mt-1">{errors[f]}</p>;
-
-  const getTicketError = (i: number, field: string) =>
-    ticketErrors[i]?.[field] && (
-      <p className="text-red-500 text-sm mt-1">{ticketErrors[i][field]}</p>
-    );
+  const onSubmit = async (data: EventFormValues) => {
+    try {
+      const payload: Events = {
+        ...data,
+        description: data.description || "",
+        imageUrl: data.imageUrl || "",
+        id: event?.id || "",
+        organizerId: event?.organizerId || "",
+        ticketTypes: data.ticketTypes.map(t => ({
+          ...t,
+          description: t.description || "",
+          id: "", // ID will be handled by backend or is not needed for creation/update payload structure depending on API
+          eventId: event?.id || ""
+        }))
+      };
+      await onSave(payload);
+      // onClose is handled by parent or we can call it here if onSave is successful
+    } catch (error) {
+      console.error("Failed to save event", error);
+    }
+  };
 
   const getTicketColor = (name?: string) => {
     if (!name) return "bg-gray-200 dark:bg-gray-700";
@@ -151,43 +152,29 @@ const EventModal: React.FC<EventModalProps> = ({ event, onClose, onSave }) => {
     return "bg-gray-200 dark:bg-gray-700";
   };
 
-  const totalRevenue = selectedEvent.ticketTypes.reduce(
-    (sum, t) => sum + (t.price || 0) * (t.totalAvailable || 0),
-    0
-  );
-
-  const inputClass = (field: string) =>
-    `w-full px-4 py-3 rounded-xl border ${
-      errors[field] ? "border-red-500" : "border-gray-300 dark:border-gray-700"
-    }`;
+  const inputClass = (error?: any) =>
+    `w-full px-4 py-3 rounded-xl border ${error ? "border-red-500 focus:ring-red-500" : "border-gray-300 dark:border-gray-700 focus:ring-blue-500"
+    } bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2`;
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6 animate-fade-in">
+    <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50 p-4 overflow-y-auto">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-3xl my-8 p-6 animate-fade-in relative">
         <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">
-          {selectedEvent.id ? "✏️ Edit Event" : "🆕 Create Event"}
+          {event?.id ? "✏️ Edit Event" : "🆕 Create Event"}
         </h2>
 
-        {errors.global && (
-          <div className="bg-red-100 text-red-600 px-4 py-2 rounded-xl mb-4">
-            {errors.global}
-          </div>
-        )}
-
-        <div className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           {/* Event Name */}
           <div>
             <label className="block mb-1 text-gray-700 dark:text-gray-300 font-medium">
               Event Name
             </label>
             <input
-              type="text"
-              value={selectedEvent.name || ""}
-              onChange={(e) => updateEventField("name", e.target.value)}
+              {...register("name")}
               placeholder="Enter event name"
-              className={inputClass("name")}
+              className={inputClass(errors.name)}
             />
-            {getError("name")}
+            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
           </div>
 
           {/* Venue */}
@@ -196,13 +183,11 @@ const EventModal: React.FC<EventModalProps> = ({ event, onClose, onSave }) => {
               Venue
             </label>
             <input
-              type="text"
-              value={selectedEvent.venue || ""}
-              onChange={(e) => updateEventField("venue", e.target.value)}
+              {...register("venue")}
               placeholder="Enter venue"
-              className={inputClass("venue")}
+              className={inputClass(errors.venue)}
             />
-            {getError("venue")}
+            {errors.venue && <p className="text-red-500 text-sm mt-1">{errors.venue.message}</p>}
           </div>
 
           {/* Description */}
@@ -211,12 +196,11 @@ const EventModal: React.FC<EventModalProps> = ({ event, onClose, onSave }) => {
               Description
             </label>
             <textarea
-              value={selectedEvent.description || ""}
-              onChange={(e) => updateEventField("description", e.target.value)}
+              {...register("description")}
               placeholder="Enter description"
-              className={inputClass("description") + " min-h-[100px]"}
+              className={inputClass(errors.description) + " min-h-[100px]"}
             />
-            {getError("description")}
+            {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
           </div>
 
           {/* Image URL */}
@@ -225,35 +209,34 @@ const EventModal: React.FC<EventModalProps> = ({ event, onClose, onSave }) => {
               Image URL
             </label>
             <input
-              type="text"
-              value={selectedEvent.imageUrl || ""}
-              onChange={(e) => updateEventField("imageUrl", e.target.value)}
+              {...register("imageUrl")}
               placeholder="Enter image URL"
-              className={inputClass("imageUrl")}
+              className={inputClass(errors.imageUrl)}
             />
-            {getError("imageUrl")}
-            {selectedEvent.imageUrl && (
+            {errors.imageUrl && <p className="text-red-500 text-sm mt-1">{errors.imageUrl.message}</p>}
+            {watch("imageUrl") && !errors.imageUrl && (
               <img
-                src={selectedEvent.imageUrl}
+                src={watch("imageUrl") || ""}
                 alt="Preview"
                 className="w-full h-44 object-cover rounded-xl border border-gray-300 dark:border-gray-700 mt-2"
+                onError={(e) => (e.currentTarget.style.display = 'none')}
               />
             )}
           </div>
 
           {/* Start / End */}
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
               <label className="block mb-1 text-gray-700 dark:text-gray-300 font-medium">
                 Start Date & Time
               </label>
               <input
                 type="datetime-local"
-                value={formatDateTimeLocal(selectedEvent.start)}
+                defaultValue={formatDateTimeLocal(watch("start"))}
                 onChange={(e) => handleDateChange("start", e.target.value)}
-                className={inputClass("start")}
+                className={inputClass(errors.start)}
               />
-              {getError("start")}
+              {errors.start && <p className="text-red-500 text-sm mt-1">{errors.start.message}</p>}
             </div>
             <div className="flex-1">
               <label className="block mb-1 text-gray-700 dark:text-gray-300 font-medium">
@@ -261,11 +244,11 @@ const EventModal: React.FC<EventModalProps> = ({ event, onClose, onSave }) => {
               </label>
               <input
                 type="datetime-local"
-                value={formatDateTimeLocal(selectedEvent.end)}
+                defaultValue={formatDateTimeLocal(watch("end"))}
                 onChange={(e) => handleDateChange("end", e.target.value)}
-                className={inputClass("end")}
+                className={inputClass(errors.end)}
               />
-              {getError("end")}
+              {errors.end && <p className="text-red-500 text-sm mt-1">{errors.end.message}</p>}
             </div>
           </div>
 
@@ -276,14 +259,11 @@ const EventModal: React.FC<EventModalProps> = ({ event, onClose, onSave }) => {
             </label>
             <input
               type="number"
-              value={selectedEvent.capacity || 0}
-              onChange={(e) =>
-                updateEventField("capacity", parseInt(e.target.value))
-              }
+              {...register("capacity", { valueAsNumber: true })}
               placeholder="Enter capacity"
-              className={inputClass("capacity")}
+              className={inputClass(errors.capacity)}
             />
-            {getError("capacity")}
+            {errors.capacity && <p className="text-red-500 text-sm mt-1">{errors.capacity.message}</p>}
           </div>
 
           {/* Ticket Types */}
@@ -294,77 +274,76 @@ const EventModal: React.FC<EventModalProps> = ({ event, onClose, onSave }) => {
               </label>
               <button
                 type="button"
-                onClick={addTicketType}
-                className="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg text-sm"
+                onClick={() => append({ name: "", price: 0, totalAvailable: 0, description: "" })}
+                className="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg text-sm transition-colors"
               >
                 + Add Ticket
               </button>
             </div>
+            {errors.ticketTypes && <p className="text-red-500 text-sm mb-2">{errors.ticketTypes.message}</p>}
 
             <div className="flex flex-col gap-3">
-              {selectedEvent.ticketTypes.map((ticket: TicketType, i: number) => (
+              {fields.map((field, index) => (
                 <div
-                  key={i}
-                  className={`p-3 rounded-xl ${getTicketColor(ticket.name)}`}
+                  key={field.id}
+                  className={`p-3 rounded-xl ${getTicketColor(watch(`ticketTypes.${index}.name`))} transition-colors`}
                 >
-                  <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="flex flex-col gap-3">
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <div className="flex-1">
+                        <input
+                          {...register(`ticketTypes.${index}.name`)}
+                          placeholder="Ticket Name"
+                          className={`w-full px-3 py-2 rounded-md border ${errors.ticketTypes?.[index]?.name
+                            ? "border-red-500"
+                            : "border-gray-300 dark:border-gray-600"
+                            }`}
+                        />
+                        {errors.ticketTypes?.[index]?.name && (
+                          <p className="text-red-500 text-xs mt-1">{errors.ticketTypes[index]?.name?.message}</p>
+                        )}
+                      </div>
+                      <div className="w-full sm:w-28">
+                        <input
+                          type="number"
+                          {...register(`ticketTypes.${index}.price`, { valueAsNumber: true })}
+                          placeholder="Price"
+                          className={`w-full px-3 py-2 rounded-md border ${errors.ticketTypes?.[index]?.price
+                            ? "border-red-500"
+                            : "border-gray-300 dark:border-gray-600"
+                            }`}
+                        />
+                        {errors.ticketTypes?.[index]?.price && (
+                          <p className="text-red-500 text-xs mt-1">{errors.ticketTypes[index]?.price?.message}</p>
+                        )}
+                      </div>
+                      <div className="w-full sm:w-24">
+                        <input
+                          type="number"
+                          {...register(`ticketTypes.${index}.totalAvailable`, { valueAsNumber: true })}
+                          placeholder="Qty"
+                          className={`w-full px-3 py-2 rounded-md border ${errors.ticketTypes?.[index]?.totalAvailable
+                            ? "border-red-500"
+                            : "border-gray-300 dark:border-gray-600"
+                            }`}
+                        />
+                        {errors.ticketTypes?.[index]?.totalAvailable && (
+                          <p className="text-red-500 text-xs mt-1">{errors.ticketTypes[index]?.totalAvailable?.message}</p>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => remove(index)}
+                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg self-start sm:self-auto"
+                      >
+                        ✕
+                      </button>
+                    </div>
                     <input
-                      type="text"
-                      placeholder="Ticket Name"
-                      value={ticket.name || ""}
-                      onChange={(e) =>
-                        updateTicketType(i, "name", e.target.value)
-                      }
-                      className={`flex-1 px-3 py-2 rounded-md border ${
-                        ticketErrors[i]?.name
-                          ? "border-red-500"
-                          : "border-gray-300 dark:border-gray-600"
-                      }`}
+                      {...register(`ticketTypes.${index}.description`)}
+                      placeholder="Description (optional)"
+                      className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600"
                     />
-                    {getTicketError(i, "name")}
-                    <input
-                      type="number"
-                      placeholder="Price"
-                      value={ticket.price || 0}
-                      onChange={(e) =>
-                        updateTicketType(i, "price", Number(e.target.value))
-                      }
-                      className={`w-28 px-3 py-2 rounded-md border ${
-                        ticketErrors[i]?.price
-                          ? "border-red-500"
-                          : "border-gray-300 dark:border-gray-600"
-                      }`}
-                    />
-                    {getTicketError(i, "price")}
-                    <input
-                      type="number"
-                      placeholder="Qty"
-                      value={ticket.totalAvailable || 0}
-                      onChange={(e) =>
-                        updateTicketType(i, "totalAvailable", Number(e.target.value))
-                      }
-                      className={`w-24 px-3 py-2 rounded-md border ${
-                        ticketErrors[i]?.totalAvailable
-                          ? "border-red-500"
-                          : "border-gray-300 dark:border-gray-600"
-                      }`}
-                    />
-                    {getTicketError(i, "totalAvailable")}
-                    <input
-                      type="text"
-                      placeholder="Description"
-                      value={ticket.description || ""}
-                      onChange={(e) =>
-                        updateTicketType(i, "description", e.target.value)
-                      }
-                      className="flex-1 px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600"
-                    />
-                    <button
-                      onClick={() => removeTicketType(i)}
-                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg"
-                    >
-                      ✕
-                    </button>
                   </div>
                 </div>
               ))}
@@ -376,17 +355,17 @@ const EventModal: React.FC<EventModalProps> = ({ event, onClose, onSave }) => {
                 Ticket Preview
               </label>
               <div className="flex flex-wrap gap-2">
-                {selectedEvent.ticketTypes.map((tt, idx) => (
+                {watchedTicketTypes?.map((tt, idx) => (
                   <div
                     key={idx}
                     className={`${getTicketColor(tt.name)} px-3 py-2 rounded-lg text-white font-semibold`}
                   >
-                    {tt.name} - ${tt.price} ({tt.totalAvailable})
+                    {tt.name || "New Ticket"} - ${tt.price || 0} ({tt.totalAvailable || 0})
                   </div>
                 ))}
               </div>
               <p className="mt-2 text-gray-700 dark:text-gray-300 font-medium">
-                Total Revenue: ${totalRevenue}
+                Total Potential Revenue: ${totalRevenue.toLocaleString()}
               </p>
             </div>
           </div>
@@ -397,34 +376,34 @@ const EventModal: React.FC<EventModalProps> = ({ event, onClose, onSave }) => {
               Status
             </label>
             <select
-              value={selectedEvent.status}
-              onChange={(e) =>
-                updateEventField("status", e.target.value as EventStatus)
-              }
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700"
+              {...register("status")}
+              className={inputClass(errors.status)}
             >
               <option value={EventStatus.DRAFT}>Draft</option>
               <option value={EventStatus.PUBLISHED}>Published</option>
               <option value={EventStatus.CANCELLED}>Cancelled</option>
               <option value={EventStatus.COMPLETED}>Completed</option>
             </select>
+            {errors.status && <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>}
           </div>
 
           <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
             <button
+              type="button"
               onClick={onClose}
-              className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-xl"
+              className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-xl transition-colors"
             >
               Cancel
             </button>
             <button
-              onClick={handleSave}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl"
+              type="submit"
+              disabled={isSubmitting}
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Save
+              {isSubmitting ? "Saving..." : "Save"}
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

@@ -6,6 +6,8 @@ import { Calendar, Ticket, BarChart3, ShieldCheck, Zap, Globe } from 'lucide-rea
 import { useTranslation } from 'react-i18next';
 import { useThemeStore } from '@/store/themeStore';
 import { SunIcon, MoonIcon, GlobeAltIcon } from '@heroicons/react/24/outline';
+import PublicNavbar from '../../components/layout/PublicNavbar';
+import PublicFooter from '../../components/layout/PublicFooter';
 
 const LandingPage = () => {
     const { t, i18n } = useTranslation();
@@ -32,50 +34,13 @@ const LandingPage = () => {
 
     return (
         <div className="min-h-screen bg-background text-foreground overflow-x-hidden transition-colors duration-300">
-            {/* Navbar */}
-            <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border">
-                <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                            <Ticket className="w-5 h-5 text-primary-foreground" />
-                        </div>
-                        <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-purple-600 dark:from-primary-400 dark:to-purple-400">
-                            TicketFlow
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={toggleLanguage}
-                            className="flex items-center gap-1 px-3 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 text-sm font-medium"
-                        >
-                            <GlobeAltIcon className="h-5 w-5" />
-                            <span>{i18n.language === 'en' ? 'EN' : 'KH'}</span>
-                        </button>
-                        <button
-                            onClick={toggleTheme}
-                            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
-                        >
-                            {theme === "light" ? (
-                                <MoonIcon className="h-5 w-5" />
-                            ) : (
-                                <SunIcon className="h-5 w-5 text-yellow-400" />
-                            )}
-                        </button>
-                        <Link to="/login">
-                            <Button variant="ghost">{t('landing.login')}</Button>
-                        </Link>
-                        <Link to="/register">
-                            <Button>{t('landing.getStarted')}</Button>
-                        </Link>
-                    </div>
-                </div>
-            </nav>
+            <PublicNavbar />
 
             {/* Hero Section */}
-            <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-                <div className="absolute inset-0 -z-10">
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-primary/20 rounded-full blur-3xl opacity-30" />
-                    <div className="absolute bottom-0 right-0 w-[800px] h-[600px] bg-purple-500/20 rounded-full blur-3xl opacity-20" />
+            <section className="relative pt-24 pb-16 md:pt-32 md:pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+                <div className="absolute inset-0 -z-10 overflow-hidden">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[150vw] md:w-[1000px] h-[300px] md:h-[500px] bg-primary/20 rounded-full blur-3xl opacity-30" />
+                    <div className="absolute bottom-0 right-0 w-[120vw] md:w-[800px] h-[400px] md:h-[600px] bg-purple-500/20 rounded-full blur-3xl opacity-20" />
                 </div>
 
                 <div className="container mx-auto px-4 text-center">
@@ -87,7 +52,7 @@ const LandingPage = () => {
                     >
                         <motion.h1
                             variants={fadeInUp}
-                            className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight"
+                            className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight"
                         >
                             {t('landing.heroTitle')} <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-pink-500">
@@ -97,7 +62,7 @@ const LandingPage = () => {
 
                         <motion.p
                             variants={fadeInUp}
-                            className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto"
+                            className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-4"
                         >
                             {t('landing.heroDescription')}
                         </motion.p>
@@ -276,50 +241,7 @@ const LandingPage = () => {
                 </div>
             </section>
 
-            {/* Footer */}
-            <footer className="border-t border-border py-12 bg-background">
-                <div className="container mx-auto px-4">
-                    <div className="grid md:grid-cols-4 gap-8 mb-8">
-                        <div className="space-y-4">
-                            <div className="flex items-center gap-2">
-                                <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
-                                    <Ticket className="w-3 h-3 text-primary-foreground" />
-                                </div>
-                                <span className="font-bold text-lg">TicketFlow</span>
-                            </div>
-                            <p className="text-sm text-muted-foreground">
-                                {t('landing.footerDesc')}
-                            </p>
-                        </div>
-                        <div>
-                            <h3 className="font-semibold mb-4">{t('landing.product')}</h3>
-                            <ul className="space-y-2 text-sm text-muted-foreground">
-                                <li><a href="#" className="hover:text-primary">{t('landing.features')}</a></li>
-                                <li><a href="#" className="hover:text-primary">{t('landing.pricing')}</a></li>
-                                <li><a href="#" className="hover:text-primary">{t('landing.security')}</a></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h3 className="font-semibold mb-4">{t('landing.company')}</h3>
-                            <ul className="space-y-2 text-sm text-muted-foreground">
-                                <li><a href="#" className="hover:text-primary">{t('landing.about')}</a></li>
-                                <li><a href="#" className="hover:text-primary">{t('landing.blog')}</a></li>
-                                <li><a href="#" className="hover:text-primary">{t('landing.careers')}</a></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h3 className="font-semibold mb-4">{t('landing.legal')}</h3>
-                            <ul className="space-y-2 text-sm text-muted-foreground">
-                                <li><a href="#" className="hover:text-primary">{t('landing.privacy')}</a></li>
-                                <li><a href="#" className="hover:text-primary">{t('landing.terms')}</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div className="text-center text-sm text-muted-foreground pt-8 border-t border-border">
-                        © {new Date().getFullYear()} TicketFlow. All rights reserved.
-                    </div>
-                </div>
-            </footer>
+            <PublicFooter />
         </div>
     );
 };

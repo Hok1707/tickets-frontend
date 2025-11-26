@@ -30,9 +30,11 @@ import FinancialCardSkeleton from "./FinancialCardSkeleton";
 import { EventStatus } from "@/types/common";
 import { Financials } from "@/types/financials";
 import { TopEvent } from "./TopEventsCard";
+import { useTranslation } from 'react-i18next';
 
 const OrganizerDashboard: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const {
     myEvents,
     setMyEvents,
@@ -100,7 +102,7 @@ const OrganizerDashboard: React.FC = () => {
     const draftEvents = myEvents.filter(e => e.status === EventStatus.DRAFT).length;
     const completedEvents = myEvents.filter(e => e.status === EventStatus.COMPLETED).length;
     const totalCapacity = myEvents.reduce((sum, e) => sum + (e.capacity || 0), 0);
-    
+
     return {
       publishedEvents,
       draftEvents,
@@ -159,10 +161,10 @@ const OrganizerDashboard: React.FC = () => {
         {/* Header */}
         <section className="space-y-2">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-            Welcome, {user.username.split(' ')[0]}! 👋
+            {t('organizerDashboard.welcome')} {user.username.split(' ')[0]}! 👋
           </h1>
           <p className="text-gray-600 dark:text-gray-400 text-lg">
-            Manage your events, track ticket sales, and monitor your financial performance.
+            {t('organizerDashboard.subtitle')}
           </p>
         </section>
 
@@ -170,22 +172,22 @@ const OrganizerDashboard: React.FC = () => {
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
             icon={<CalendarDaysIcon className="h-6 w-6 text-blue-500" />}
-            title="Total Events"
+            title={t('organizerDashboard.totalEvents')}
             value={myEvents.length.toLocaleString()}
           />
           <StatCard
             icon={<TicketIcon className="h-6 w-6 text-green-500" />}
-            title="Tickets Sold"
+            title={t('organizerDashboard.ticketsSold')}
             value={ticketsSold.toLocaleString()}
           />
           <StatCard
             icon={<SparklesIcon className="h-6 w-6 text-purple-500" />}
-            title="Published"
+            title={t('organizerDashboard.published')}
             value={stats.publishedEvents.toLocaleString()}
           />
           <StatCard
             icon={<UsersIcon className="h-6 w-6 text-orange-500" />}
-            title="Total Capacity"
+            title={t('organizerDashboard.totalCapacity')}
             value={stats.totalCapacity.toLocaleString()}
           />
         </section>
@@ -196,23 +198,23 @@ const OrganizerDashboard: React.FC = () => {
             <div>
               <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                 <ChartBarIcon className="h-6 w-6 text-primary-500" />
-                Financial Overview
+                {t('organizerDashboard.financialOverview')}
               </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Track revenue, expenses, and profitability</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('organizerDashboard.financialSubtitle')}</p>
             </div>
             <DateRangePicker startDate={dateRange.startDate} endDate={dateRange.endDate} onChange={setDateRange} />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <FinancialCard
-              title="Total Income"
+              title={t('organizerDashboard.totalIncome')}
               value={financials?.totalIncome ?? 0}
               icon={<ArrowTrendingUpIcon className="h-6 w-6 text-green-600 dark:text-green-400" />}
               colorClass="bg-green-100 dark:bg-green-900/50"
               change={financials?.incomeChange}
             />
             <FinancialCard
-              title="Total Expenses"
+              title={t('organizerDashboard.totalExpenses')}
               value={financials?.totalExpenses ?? 0}
               icon={<ArrowTrendingDownIcon className="h-6 w-6 text-red-600 dark:text-red-400" />}
               colorClass="bg-red-100 dark:bg-red-900/50"
@@ -220,14 +222,14 @@ const OrganizerDashboard: React.FC = () => {
               invertChangeColor
             />
             <FinancialCard
-              title="Net Profit"
+              title={t('organizerDashboard.netProfit')}
               value={financials?.netProfit ?? 0}
               icon={<BanknotesIcon className="h-6 w-6 text-blue-600 dark:text-blue-400" />}
               colorClass="bg-blue-100 dark:bg-blue-900/50"
               change={financials?.netProfitChange}
             />
             <FinancialCard
-              title="Est. Taxes (20%)"
+              title={t('organizerDashboard.estTaxes')}
               value={financials?.taxes ?? 0}
               icon={<ReceiptPercentIcon className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />}
               colorClass="bg-yellow-100 dark:bg-yellow-900/50"
@@ -241,9 +243,9 @@ const OrganizerDashboard: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                 <ChartBarIcon className="h-5 w-5 text-primary-500" />
-                Performance Over Time
+                {t('organizerDashboard.performance')}
               </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Income, expenses, and profit trends</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('organizerDashboard.performanceSubtitle')}</p>
             </div>
           </div>
           {financials && financials.chartData.length > 0 ? (
@@ -251,8 +253,8 @@ const OrganizerDashboard: React.FC = () => {
           ) : (
             <div className="text-center py-16">
               <ChartBarIcon className="h-16 w-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-              <p className="text-gray-500 dark:text-gray-400 font-medium">No financial data available</p>
-              <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Select a date range to view financial trends</p>
+              <p className="text-gray-500 dark:text-gray-400 font-medium">{t('organizerDashboard.noFinancialData')}</p>
+              <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">{t('organizerDashboard.selectDateRange')}</p>
             </div>
           )}
         </section>
@@ -263,9 +265,9 @@ const OrganizerDashboard: React.FC = () => {
             <div>
               <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                 <Cog6ToothIcon className="h-6 w-6 text-primary-500" />
-                Quick Actions
+                {t('organizerDashboard.quickActions')}
               </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Common tasks for event management</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('organizerDashboard.quickActionsSubtitle')}</p>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -276,9 +278,9 @@ const OrganizerDashboard: React.FC = () => {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <CalendarDaysIcon className="h-5 w-5" />
-                  <h3 className="font-bold text-lg">Manage Events</h3>
+                  <h3 className="font-bold text-lg">{t('organizerDashboard.manageEvents')}</h3>
                 </div>
-                <p className="text-sm text-blue-100">View, edit, and manage all your events</p>
+                <p className="text-sm text-blue-100">{t('organizerDashboard.manageEventsDesc')}</p>
               </div>
               <ArrowRightIcon className="h-6 w-6 text-white group-hover:translate-x-1 transition-transform" />
             </Link>
@@ -289,9 +291,9 @@ const OrganizerDashboard: React.FC = () => {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <PlusIcon className="h-5 w-5" />
-                  <h3 className="font-bold text-lg">Create Event</h3>
+                  <h3 className="font-bold text-lg">{t('organizerDashboard.createEvent')}</h3>
                 </div>
-                <p className="text-sm text-purple-100">Create a new event and start selling tickets</p>
+                <p className="text-sm text-purple-100">{t('organizerDashboard.createEventDesc')}</p>
               </div>
               <ArrowRightIcon className="h-6 w-6 text-white group-hover:translate-x-1 transition-transform" />
             </Link>
@@ -304,8 +306,8 @@ const OrganizerDashboard: React.FC = () => {
                   <QrCodeIcon className="h-8 w-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg mb-1">Scan & Verify Tickets</h3>
-                  <p className="text-sm text-green-100">Quick access to ticket scanning and verification</p>
+                  <h3 className="font-bold text-lg mb-1">{t('organizerDashboard.scanVerify')}</h3>
+                  <p className="text-sm text-green-100">{t('organizerDashboard.scanVerifyDesc')}</p>
                 </div>
               </div>
               <ArrowRightIcon className="h-6 w-6 text-white group-hover:translate-x-1 transition-transform" />
@@ -321,23 +323,23 @@ const OrganizerDashboard: React.FC = () => {
                 <CalendarDaysIcon className="h-6 w-6 text-white" />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Event Status Summary</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-3">{t('organizerDashboard.eventStatusSummary')}</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="bg-white dark:bg-gray-800 rounded-lg p-3 text-center">
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.publishedEvents}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Published</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{t('organizerDashboard.published')}</p>
                   </div>
                   <div className="bg-white dark:bg-gray-800 rounded-lg p-3 text-center">
                     <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.draftEvents}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Draft</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{t('organizerDashboard.draft')}</p>
                   </div>
                   <div className="bg-white dark:bg-gray-800 rounded-lg p-3 text-center">
                     <p className="text-2xl font-bold text-gray-600 dark:text-gray-400">{stats.completedEvents}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Completed</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{t('organizerDashboard.completed')}</p>
                   </div>
                   <div className="bg-white dark:bg-gray-800 rounded-lg p-3 text-center">
                     <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{myEvents.length}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Total</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{t('organizerDashboard.total')}</p>
                   </div>
                 </div>
               </div>

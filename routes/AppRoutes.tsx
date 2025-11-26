@@ -5,6 +5,7 @@ import Layout from '../components/layout/Layout';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import RoleBasedRoute from '../components/auth/RoleBasedRoute';
 import { Role } from '@/types/common';
+import PublicLayout from '../components/layout/PublicLayout';
 
 const LoginPage = lazy(() => import('../features/auth/LoginPage'));
 const RegisterPage = lazy(() => import('../features/auth/RegisterPage'));
@@ -25,6 +26,14 @@ const TicketsPage = lazy(() => import('../features/tickets/components/TicketsPag
 const ResetPasswordPage = lazy(() => import('../features/auth/ResetPassword'));
 const ForgotPasswordPage = lazy(() => import('../features/auth/ForgotPassword'));
 const LandingPage = lazy(() => import('../features/landing/LandingPage'));
+const FeaturesPage = lazy(() => import('../features/static/FeaturesPage'));
+const PricingPage = lazy(() => import('../features/static/PricingPage'));
+const SecurityPage = lazy(() => import('../features/static/SecurityPage'));
+const AboutPage = lazy(() => import('../features/static/AboutPage'));
+const BlogPage = lazy(() => import('../features/static/BlogPage'));
+const CareersPage = lazy(() => import('../features/static/CareersPage'));
+const PrivacyPage = lazy(() => import('../features/static/PrivacyPage'));
+const TermsPage = lazy(() => import('../features/static/TermsPage'));
 
 const AppRoutes: React.FC = () => {
     return (
@@ -34,6 +43,17 @@ const AppRoutes: React.FC = () => {
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/" element={<LandingPage />} />
+
+            <Route element={<PublicLayout />}>
+                <Route path="/features" element={<FeaturesPage />} />
+                <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/security" element={<SecurityPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/blog" element={<BlogPage />} />
+                <Route path="/careers" element={<CareersPage />} />
+                <Route path="/privacy" element={<PrivacyPage />} />
+                <Route path="/terms" element={<TermsPage />} />
+            </Route>
 
             <Route element={<ProtectedRoute />}>
                 <Route element={<Layout />}>
