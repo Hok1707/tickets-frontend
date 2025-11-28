@@ -49,7 +49,7 @@ export default function TicketsPage() {
     try {
       setLoading(true);
       console.log(confirmModal.purchaserId, confirmModal.ticketId);
-      
+
       await ticketService.purchaseTickets(
         confirmModal.ticketId,
         confirmModal.purchaserId
@@ -72,9 +72,9 @@ export default function TicketsPage() {
 
   const filteredTickets = tickets.filter(
     (t) =>
-      t.ticketName.toLowerCase().includes(search.toLowerCase()) ||
-      t.purchaser.email.toLowerCase().includes(search.toLowerCase()) ||
-      t.eventName.toLowerCase().includes(search.toLowerCase())
+      (t.ticketName || '').toLowerCase().includes(search.toLowerCase()) ||
+      (t.status.toLowerCase().includes(search.toLowerCase())) ||
+      (t.eventName || '').toLowerCase().includes(search.toLowerCase())
   );
 
   if (loading) return <FullScreenLoader />;
@@ -99,11 +99,10 @@ export default function TicketsPage() {
           <button
             key={i}
             onClick={() => goToPage(i)}
-            className={`px-3 py-1 border rounded ${
-              i === meta.currentPage
+            className={`px-3 py-1 border rounded ${i === meta.currentPage
                 ? "bg-blue-600 text-white border-blue-600"
                 : "border-gray-300 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700"
-            }`}
+              }`}
           >
             {i + 1}
           </button>
@@ -179,13 +178,12 @@ export default function TicketsPage() {
 
                 <td className="p-3">
                   <span
-                    className={`px-2 py-1 rounded text-xs font-medium ${
-                      ticket.status === "PURCHASED"
+                    className={`px-2 py-1 rounded text-xs font-medium ${ticket.status === "PURCHASED"
                         ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                         : ticket.status === "CANCELLED"
-                        ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
-                        : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
-                    }`}
+                          ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                          : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                      }`}
                   >
                     {ticket.status}
                   </span>
@@ -329,7 +327,7 @@ export default function TicketsPage() {
                 <Dialog.Title className="text-lg font-semibold">Confirm Payment</Dialog.Title>
 
                 <p className="mt-2 text-gray-700 dark:text-gray-300">
-                  Are you sure you want to mark this ticket as <b>PAID</b>?  
+                  Are you sure you want to mark this ticket as <b>PAID</b>?
                   This action cannot be undone.
                 </p>
 

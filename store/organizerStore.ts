@@ -49,7 +49,7 @@ export const useOrganizerStore = create<OrganizerStoreState>((set, get) => ({
   get topRevenueEvent() {
     const topEvents = get().topSellingEvents;
     if (topEvents.length === 0) return null;
-    return topEvents.reduce((prev, curr) => (curr.revenue > prev.revenue ? curr : prev));
+    return topEvents.reduce((prev, curr) => ((curr.revenue ?? 0) > (prev.revenue ?? 0) ? curr : prev));
   },
 
   setMyEvents: (events) => set({ myEvents: events }),

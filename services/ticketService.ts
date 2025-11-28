@@ -33,10 +33,10 @@ export const ticketService = {
     return res.data;
   },
 
-  // redeemTicket: async (qrCodeValue: string): Promise<RedeemTicketResponse> => {
-  //   const res = await apiClient.put(`${API_ENDPOINTS.TICKET}/redeem/${qrCodeValue}`);
-  //   return res.data;
-  // },
+  redeemTicket: async (qrCodeValue: string): Promise<any> => {
+    const res = await apiClient.put(`${API_ENDPOINTS.TICKET}/redeem/${qrCodeValue}`);
+    return res.data;
+  },
 
   replaceTicket: async (ticketId: string): Promise<{ success: boolean; newTicket: Ticket }> => {
     const res = await apiClient.put(`${API_ENDPOINTS.TICKET}/replace/${ticketId}`);

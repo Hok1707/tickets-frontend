@@ -1,6 +1,6 @@
 
-import React, { useEffect, Suspense } from 'react';
-import { BrowserRouter, HashRouter } from 'react-router-dom';
+import { useEffect, Suspense } from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import AppRoutes from './routes/AppRoutes';
 import { useThemeStore } from './store/themeStore';

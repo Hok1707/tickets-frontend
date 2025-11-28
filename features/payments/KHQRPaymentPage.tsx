@@ -108,10 +108,14 @@ const KHQRPaymentPage: React.FC = () => {
             stopPolling();
             stopCountdown();
             try {
+              if (!orderId || !user) {
+                toast.error("Missing order or user information");
+                return;
+              }
               await paymentService.updateOrderStatus(orderId, { status: "PAID", md5Hash: md5 });
               toast.success("✅ Payment Success!");
               clearCart();
-              await ticketService.purchaseTickets(orderId!, user!.id);
+              await ticketService.purchaseTickets(orderId, user.id);
               navigate(`/payment-success/${orderId}`);
             } catch (err) {
               console.error("Order status update failed:", err);

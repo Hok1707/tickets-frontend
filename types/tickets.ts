@@ -53,7 +53,7 @@ export interface Attendee {
 }
 
 export interface TicketType {
-  id?: string;
+  id: string;
   name: string;
   price: number;
   description: string;

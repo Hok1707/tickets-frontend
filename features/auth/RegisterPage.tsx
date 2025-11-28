@@ -11,7 +11,6 @@ import {
     EyeIcon,
     EyeSlashIcon,
     CheckCircleIcon,
-    XCircleIcon,
     ArrowRightIcon,
     ArrowLeftIcon,
     SunIcon,
@@ -20,19 +19,43 @@ import {
 } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
 import { useThemeStore } from '@/store/themeStore';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+
+const registerSchema = z.object({
+    username: z.string().min(3, 'Username must be at least 3 characters'),
+    email: z.string().email('Please enter a valid email address'),
+    password: z.string()
+        .min(8, 'Password must be at least 8 characters')
+        .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+        .regex(/[0-9]/, 'Password must contain at least one number'),
+    confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+});
+
+type RegisterFormValues = z.infer<typeof registerSchema>;
 
 const RegisterPage: React.FC = () => {
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [errors, setErrors] = useState<Record<string, string>>({});
     const navigate = useNavigate();
     const { t, i18n } = useTranslation();
     const { theme, toggleTheme } = useThemeStore();
+
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors, isSubmitting, isValid },
+    } = useForm<RegisterFormValues>({
+        resolver: zodResolver(registerSchema),
+        mode: 'onChange',
+    });
+
+    const password = watch('password', '');
 
     const toggleLanguage = () => {
         const newLang = i18n.language === 'en' ? 'km' : 'en';
@@ -66,62 +89,15 @@ const RegisterPage: React.FC = () => {
         };
     }, [password]);
 
-    // Validation functions
-    const validateEmail = (email: string) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
-
-    const validateForm = () => {
-        const newErrors: Record<string, string> = {};
-
-        if (username.trim().length < 3) {
-            newErrors.username = 'Username must be at least 3 characters';
-        }
-
-        if (!validateEmail(email)) {
-            newErrors.email = 'Please enter a valid email address';
-        }
-
-        if (password.length < 8) {
-            newErrors.password = 'Password must be at least 8 characters';
-        }
-
-        if (password !== confirmPassword) {
-            newErrors.confirmPassword = 'Passwords do not match';
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (!validateForm()) {
-            toast.error('Please fix the errors in the form');
-            return;
-        }
-
-        setIsLoading(true);
+    const onSubmit = async (data: RegisterFormValues) => {
         try {
-            await authService.register({ username, email, password, confirmPassword });
+            await authService.register({ username: data.username, email: data.email, password: data.password, confirmPassword: data.confirmPassword });
             toast.success('Registration successful! Please log in.');
             navigate('/login');
         } catch (error) {
             toast.error(error instanceof Error ? error.message : 'Registration failed');
-        } finally {
-            setIsLoading(false);
         }
     };
-
-    const isFormValid = useMemo(() => {
-        return username.trim().length >= 3 &&
-            validateEmail(email) &&
-            password.length >= 8 &&
-            password === confirmPassword &&
-            password.length > 0;
-    }, [username, email, password, confirmPassword]);
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-[url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center relative overflow-hidden">
@@ -197,7 +173,7 @@ const RegisterPage: React.FC = () => {
                         </p>
                     </div>
 
-                    <form className="space-y-5" onSubmit={handleSubmit}>
+                    <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
                         {/* Username Field */}
                         <div>
                             <label htmlFor="username" className="block text-sm font-medium text-gray-200 mb-2">
@@ -209,26 +185,18 @@ const RegisterPage: React.FC = () => {
                                 </div>
                                 <input
                                     id="username"
-                                    name="username"
                                     type="text"
                                     autoComplete="username"
-                                    required
                                     className={`w-full pl-12 pr-4 py-3.5 bg-gray-900/50 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all ${errors.username
                                         ? 'border-red-500/50 focus:border-red-500'
                                         : 'border-white/10 hover:border-white/20'
                                         }`}
                                     placeholder="Choose a username"
-                                    value={username}
-                                    onChange={(e) => {
-                                        setUsername(e.target.value);
-                                        if (errors.username) {
-                                            setErrors({ ...errors, username: '' });
-                                        }
-                                    }}
+                                    {...register('username')}
                                 />
-                                {username && username.length >= 3 && !errors.username && (
+                                {!errors.username && (
                                     <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
-                                        <CheckCircleIcon className="h-5 w-5 text-green-500" />
+                                        <CheckCircleIcon className="h-5 w-5 text-green-500 opacity-0 group-focus-within:opacity-100 transition-opacity" />
                                     </div>
                                 )}
                             </div>
@@ -238,7 +206,7 @@ const RegisterPage: React.FC = () => {
                                     animate={{ opacity: 1, height: 'auto' }}
                                     className="mt-1 text-sm text-red-400"
                                 >
-                                    {errors.username}
+                                    {errors.username?.message}
                                 </motion.p>
                             )}
                         </div>
@@ -254,26 +222,18 @@ const RegisterPage: React.FC = () => {
                                 </div>
                                 <input
                                     id="email"
-                                    name="email"
                                     type="email"
                                     autoComplete="email"
-                                    required
                                     className={`w-full pl-12 pr-4 py-3.5 bg-gray-900/50 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all ${errors.email
                                         ? 'border-red-500/50 focus:border-red-500'
                                         : 'border-white/10 hover:border-white/20'
                                         }`}
                                     placeholder="your.email@example.com"
-                                    value={email}
-                                    onChange={(e) => {
-                                        setEmail(e.target.value);
-                                        if (errors.email) {
-                                            setErrors({ ...errors, email: '' });
-                                        }
-                                    }}
+                                    {...register('email')}
                                 />
-                                {email && validateEmail(email) && !errors.email && (
+                                {!errors.email && (
                                     <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
-                                        <CheckCircleIcon className="h-5 w-5 text-green-500" />
+                                        <CheckCircleIcon className="h-5 w-5 text-green-500 opacity-0 group-focus-within:opacity-100 transition-opacity" />
                                     </div>
                                 )}
                             </div>
@@ -283,7 +243,7 @@ const RegisterPage: React.FC = () => {
                                     animate={{ opacity: 1, height: 'auto' }}
                                     className="mt-1 text-sm text-red-400"
                                 >
-                                    {errors.email}
+                                    {errors.email?.message}
                                 </motion.p>
                             )}
                         </div>
@@ -299,22 +259,14 @@ const RegisterPage: React.FC = () => {
                                 </div>
                                 <input
                                     id="password"
-                                    name="password"
                                     type={showPassword ? 'text' : 'password'}
                                     autoComplete="new-password"
-                                    required
                                     className={`w-full pl-12 pr-12 py-3.5 bg-gray-900/50 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all ${errors.password
                                         ? 'border-red-500/50 focus:border-red-500'
                                         : 'border-white/10 hover:border-white/20'
                                         }`}
                                     placeholder="Create a strong password"
-                                    value={password}
-                                    onChange={(e) => {
-                                        setPassword(e.target.value);
-                                        if (errors.password) {
-                                            setErrors({ ...errors, password: '' });
-                                        }
-                                    }}
+                                    {...register('password')}
                                 />
                                 <button
                                     type="button"
@@ -334,7 +286,7 @@ const RegisterPage: React.FC = () => {
                                     animate={{ opacity: 1, height: 'auto' }}
                                     className="mt-1 text-sm text-red-400"
                                 >
-                                    {errors.password}
+                                    {errors.password?.message}
                                 </motion.p>
                             )}
 
@@ -385,23 +337,13 @@ const RegisterPage: React.FC = () => {
                                 </div>
                                 <input
                                     id="confirmPassword"
-                                    name="confirmPassword"
                                     type={showConfirmPassword ? 'text' : 'password'}
-                                    required
                                     className={`w-full pl-12 pr-12 py-3.5 bg-gray-900/50 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all ${errors.confirmPassword
                                         ? 'border-red-500/50 focus:border-red-500'
-                                        : confirmPassword && password === confirmPassword
-                                            ? 'border-green-500/50 focus:border-green-500'
-                                            : 'border-white/10 hover:border-white/20'
+                                        : 'border-white/10 hover:border-white/20'
                                         }`}
                                     placeholder="Confirm your password"
-                                    value={confirmPassword}
-                                    onChange={(e) => {
-                                        setConfirmPassword(e.target.value);
-                                        if (errors.confirmPassword) {
-                                            setErrors({ ...errors, confirmPassword: '' });
-                                        }
-                                    }}
+                                    {...register('confirmPassword')}
                                 />
                                 <button
                                     type="button"
@@ -421,7 +363,7 @@ const RegisterPage: React.FC = () => {
                                     animate={{ opacity: 1, height: 'auto' }}
                                     className="mt-1 text-sm text-red-400"
                                 >
-                                    {errors.confirmPassword}
+                                    {errors.confirmPassword?.message}
                                 </motion.p>
                             )}
                         </div>
@@ -431,10 +373,10 @@ const RegisterPage: React.FC = () => {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             type="submit"
-                            disabled={isLoading || !isFormValid}
+                            disabled={isSubmitting || !isValid}
                             className="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent text-base font-semibold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary-500/25 transition-all"
                         >
-                            {isLoading ? (
+                            {isSubmitting ? (
                                 <>
                                     <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>

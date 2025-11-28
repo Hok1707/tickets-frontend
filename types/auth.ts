@@ -1,7 +1,7 @@
 import { Role, AccountStatus } from './common';
 
 export interface User {
-  id: string | null;
+  id: string;
   username: string;
   email: string;
   phoneNumber?: string | null;
