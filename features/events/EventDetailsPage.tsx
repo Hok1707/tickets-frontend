@@ -3,8 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import { eventService } from '@/services/eventService';
 import { ticketService } from '@/services/ticketService';
 import toast from 'react-hot-toast';
-import { 
-    CalendarIcon, 
+import {
+    CalendarIcon,
     ArrowLeftIcon,
     TicketIcon,
     TagIcon,
@@ -108,7 +108,7 @@ const EventDetailsPage: React.FC = () => {
             case EventStatus.PUBLISHED:
                 return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800";
             case EventStatus.COMPLETED:
-                return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600";
+                return "bg-muted text-muted-foreground border-border";
             case EventStatus.CANCELLED:
                 return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800";
             default:
@@ -126,26 +126,26 @@ const EventDetailsPage: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+            <div className="min-h-screen bg-background">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     {/* Back Button Skeleton */}
-                    <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mb-6"></div>
-                    
+                    <div className="h-6 w-32 bg-muted rounded animate-pulse mb-6"></div>
+
                     {/* Hero Image Skeleton */}
-                    <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded-xl mb-8 animate-pulse"></div>
-                    
+                    <div className="h-96 bg-muted rounded-xl mb-8 animate-pulse"></div>
+
                     {/* Content Skeleton */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2 space-y-6">
-                            <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded w-3/4 animate-pulse"></div>
-                            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/2 animate-pulse"></div>
+                            <div className="h-12 bg-muted rounded w-3/4 animate-pulse"></div>
+                            <div className="h-6 bg-muted rounded w-1/2 animate-pulse"></div>
                             <div className="space-y-3">
-                                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6 animate-pulse"></div>
+                                <div className="h-4 bg-muted rounded animate-pulse"></div>
+                                <div className="h-4 bg-muted rounded w-5/6 animate-pulse"></div>
                             </div>
                         </div>
                         <div className="lg:col-span-1">
-                            <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse"></div>
+                            <div className="h-96 bg-muted rounded-xl animate-pulse"></div>
                         </div>
                     </div>
                 </div>
@@ -155,17 +155,17 @@ const EventDetailsPage: React.FC = () => {
 
     if (!event) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+            <div className="min-h-screen bg-background flex items-center justify-center">
                 <div className="text-center max-w-md px-4">
-                    <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <XCircleIcon className="h-12 w-12 text-gray-400" />
+                    <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+                        <XCircleIcon className="h-12 w-12 text-muted-foreground" />
                     </div>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Event Not Found</h1>
-                    <p className="text-gray-600 dark:text-gray-400 mb-8">
+                    <h1 className="text-3xl font-bold text-foreground mb-2">Event Not Found</h1>
+                    <p className="text-muted-foreground mb-8">
                         The event you are looking for does not exist or may have been removed.
                     </p>
-                    <Link 
-                        to="/events" 
+                    <Link
+                        to="/events"
                         className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white rounded-xl shadow-lg transition-all duration-200 font-semibold"
                     >
                         <ArrowLeftIcon className="h-5 w-5" />
@@ -179,8 +179,8 @@ const EventDetailsPage: React.FC = () => {
     const formatDateRange = (start: string, end: string) => {
         const startDate = new Date(start);
         const endDate = new Date(end);
-        const options: Intl.DateTimeFormatOptions = { 
-            year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' 
+        const options: Intl.DateTimeFormatOptions = {
+            year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit'
         };
         return `${startDate.toLocaleString('en-US', options)} - ${endDate.toLocaleString('en-US', options)}`;
     };
@@ -208,12 +208,12 @@ const EventDetailsPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="min-h-screen bg-background">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 {/* Back Button */}
-                <Link 
-                    to="/events" 
-                    className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 mb-6 transition-colors group"
+                <Link
+                    to="/events"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary mb-6 transition-colors group"
                 >
                     <ArrowLeftIcon className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
                     Back to All Events
@@ -221,13 +221,13 @@ const EventDetailsPage: React.FC = () => {
 
                 {/* Hero Section */}
                 <div className="relative h-64 md:h-80 lg:h-96 rounded-2xl overflow-hidden shadow-2xl mb-8 group">
-                    <img 
-                        src={event.imageUrl} 
-                        alt={event.name} 
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                    <img
+                        src={event.imageUrl}
+                        alt={event.name}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
-                    
+
                     {/* Status Badge */}
                     <div className="absolute top-6 left-6">
                         <span className={`px-4 py-2 rounded-full text-sm font-semibold border ${getStatusBadgeClass(event.status)}`}>
@@ -272,7 +272,7 @@ const EventDetailsPage: React.FC = () => {
                     {/* Left Column - Event Details */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Event Info Cards */}
-                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+                        <div className="bg-card rounded-xl shadow-md p-6 border border-border">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {/* Date & Time */}
                                 <div className="flex items-start gap-4">
@@ -280,9 +280,9 @@ const EventDetailsPage: React.FC = () => {
                                         <CalendarOutline className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                                     </div>
                                     <div>
-                                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Date & Time</p>
-                                        <p className="text-base font-semibold text-gray-900 dark:text-white">{formatDate(event.start)}</p>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                        <p className="text-sm font-medium text-muted-foreground mb-1">Date & Time</p>
+                                        <p className="text-base font-semibold text-foreground">{formatDate(event.start)}</p>
+                                        <p className="text-sm text-muted-foreground mt-1">
                                             {formatTime(event.start)} - {formatTime(event.end)}
                                         </p>
                                     </div>
@@ -294,8 +294,8 @@ const EventDetailsPage: React.FC = () => {
                                         <MapPinOutline className="h-6 w-6 text-red-600 dark:text-red-400" />
                                     </div>
                                     <div>
-                                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Venue</p>
-                                        <p className="text-base font-semibold text-gray-900 dark:text-white">{event.venue}</p>
+                                        <p className="text-sm font-medium text-muted-foreground mb-1">Venue</p>
+                                        <p className="text-base font-semibold text-foreground">{event.venue}</p>
                                     </div>
                                 </div>
 
@@ -305,8 +305,8 @@ const EventDetailsPage: React.FC = () => {
                                         <UsersOutline className="h-6 w-6 text-green-600 dark:text-green-400" />
                                     </div>
                                     <div>
-                                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Capacity</p>
-                                        <p className="text-base font-semibold text-gray-900 dark:text-white">
+                                        <p className="text-sm font-medium text-muted-foreground mb-1">Capacity</p>
+                                        <p className="text-base font-semibold text-foreground">
                                             {event.capacity.toLocaleString()} attendees
                                         </p>
                                     </div>
@@ -318,8 +318,8 @@ const EventDetailsPage: React.FC = () => {
                                         <TicketOutline className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                                     </div>
                                     <div>
-                                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Tickets Available</p>
-                                        <p className="text-base font-semibold text-gray-900 dark:text-white">
+                                        <p className="text-sm font-medium text-muted-foreground mb-1">Tickets Available</p>
+                                        <p className="text-base font-semibold text-foreground">
                                             {getTotalTicketsAvailable().toLocaleString()} tickets
                                         </p>
                                     </div>
@@ -328,14 +328,14 @@ const EventDetailsPage: React.FC = () => {
                         </div>
 
                         {/* About Event */}
-                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 md:p-8">
+                        <div className="bg-card rounded-xl shadow-md p-6 md:p-8 border border-border">
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="bg-primary-100 dark:bg-primary-900/30 p-2 rounded-lg">
-                                    <CalendarIcon className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                                    <CalendarIcon className="h-5 w-5 text-primary" />
                                 </div>
-                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">About This Event</h2>
+                                <h2 className="text-2xl font-bold text-foreground">About This Event</h2>
                             </div>
-                            <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap text-base">
+                            <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap text-base">
                                 {event.description}
                             </p>
                         </div>
@@ -345,10 +345,10 @@ const EventDetailsPage: React.FC = () => {
                     <div className="lg:col-span-1">
                         <div className="sticky top-6 space-y-6">
                             {/* Tickets Card */}
-                            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                            <div className="bg-card rounded-xl shadow-lg p-6 border border-border">
                                 <div className="flex items-center justify-between mb-6">
-                                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                        <TicketIcon className="h-6 w-6 text-primary-500" />
+                                    <h3 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                                        <TicketIcon className="h-6 w-6 text-primary" />
                                         Tickets
                                     </h3>
                                 </div>
@@ -374,21 +374,21 @@ const EventDetailsPage: React.FC = () => {
                                         event.ticketTypes.map((tt) => {
                                             const availability = getTicketAvailability(tt);
                                             const isSoldOut = (tt.totalAvailable || 0) === 0;
-                                            
+
                                             return (
-                                                <div 
-                                                    key={tt.id} 
-                                                    className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700/50 dark:to-gray-800/50 p-5 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200"
+                                                <div
+                                                    key={tt.id}
+                                                    className="bg-muted/30 p-5 rounded-xl border border-border hover:shadow-md transition-all duration-200"
                                                 >
                                                     {/* Ticket Header */}
                                                     <div className="flex justify-between items-start mb-3">
                                                         <div className="flex-1">
                                                             <div className="flex items-center gap-2 mb-1">
-                                                                <h4 className="font-bold text-lg text-gray-900 dark:text-white">
+                                                                <h4 className="font-bold text-lg text-foreground">
                                                                     {tt.name}
                                                                 </h4>
                                                                 {tt.description && (
-                                                                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                                                                    <span className="text-xs text-muted-foreground">
                                                                         {tt.description}
                                                                     </span>
                                                                 )}
@@ -398,10 +398,10 @@ const EventDetailsPage: React.FC = () => {
                                                             </p>
                                                         </div>
                                                         <div className="text-right">
-                                                            <p className="text-3xl font-bold text-primary-600 dark:text-primary-400">
+                                                            <p className="text-3xl font-bold text-primary">
                                                                 ${tt.price.toFixed(2)}
                                                             </p>
-                                                            <p className="text-xs text-gray-500 dark:text-gray-400">per ticket</p>
+                                                            <p className="text-xs text-muted-foreground">per ticket</p>
                                                         </div>
                                                     </div>
 
@@ -410,11 +410,10 @@ const EventDetailsPage: React.FC = () => {
                                                         <button
                                                             onClick={() => handlePurchaseClick(tt)}
                                                             disabled={isSoldOut}
-                                                            className={`w-full px-4 py-3 rounded-lg font-semibold text-base transition-all duration-200 ${
-                                                                isSoldOut
+                                                            className={`w-full px-4 py-3 rounded-lg font-semibold text-base transition-all duration-200 ${isSoldOut
                                                                     ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                                                                     : 'bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white shadow-lg hover:shadow-xl transform hover:scale-105'
-                                                            }`}
+                                                                }`}
                                                         >
                                                             {isSoldOut ? 'Sold Out' : 'Purchase Tickets'}
                                                         </button>
@@ -437,10 +436,10 @@ const EventDetailsPage: React.FC = () => {
 
                                 {/* Summary Info */}
                                 {event.ticketTypes.length > 0 && (
-                                    <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                                    <div className="mt-6 pt-6 border-t border-border">
                                         <div className="flex items-center justify-between text-sm">
-                                            <span className="text-gray-600 dark:text-gray-400">Total Available:</span>
-                                            <span className="font-semibold text-gray-900 dark:text-white">
+                                            <span className="text-muted-foreground">Total Available:</span>
+                                            <span className="font-semibold text-foreground">
                                                 {getTotalTicketsAvailable().toLocaleString()} tickets
                                             </span>
                                         </div>

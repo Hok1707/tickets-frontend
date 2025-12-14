@@ -9,11 +9,14 @@ import {
   Bars3Icon,
   Cog6ToothIcon,
   ShoppingCartIcon,
+  BellIcon,
+  MagnifyingGlassIcon
 } from "@heroicons/react/24/outline";
 import ConfirmationModal from "@/components/common/ConfirmationModal";
 import { useTranslation } from "react-i18next";
 import ThemeToggle from "@/components/common/ThemeToggle";
 import LanguageToggle from "@/components/common/LanguageToggle";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface HeaderProps {
   sidebarOpen: boolean;
@@ -31,12 +34,12 @@ const getInitials = (name?: string | null): string => {
 
 const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const { user, logout, role } = useAuthStore();
-  const { theme, toggleTheme } = useThemeStore();
+  const { theme } = useThemeStore();
   const { cart } = useCartStore();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const trigger = useRef<HTMLButtonElement>(null);
   const dropdown = useRef<HTMLDivElement>(null);
@@ -74,14 +77,12 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
     setIsLogoutModalOpen(true);
   };
 
-
-
   const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
     <>
-      <header className="sticky top-0 z-40 flex w-full bg-white/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 dark:bg-gray-800/80 shadow-sm transition-colors duration-300">
-        <div className="flex flex-grow items-center justify-between px-4 py-3 md:px-6 2xl:px-11">
+      <header className="sticky top-0 z-40 flex w-full bg-background/80 backdrop-blur-xl border-b border-border transition-all duration-300">
+        <div className="flex flex-grow items-center justify-between px-4 py-4 md:px-6 2xl:px-11">
           <div className="flex items-center gap-2 sm:gap-4 lg:hidden">
             <button
               aria-controls="sidebar"
@@ -89,25 +90,47 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
                 e.stopPropagation();
                 setSidebarOpen(!sidebarOpen);
               }}
-              className="z-50 block rounded-sm border border-gray-200 bg-white p-1.5 shadow-sm dark:border-gray-700 dark:bg-gray-800 lg:hidden"
+              className="z-50 block rounded-lg border border-border bg-background p-2 shadow-sm lg:hidden hover:bg-muted transition-colors"
             >
-              <Bars3Icon className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+              <Bars3Icon className="h-6 w-6 text-foreground" />
             </button>
           </div>
 
-          <div className="hidden sm:block"></div>
+          {/* Search Bar */}
+          <div className="hidden sm:block max-w-md w-full">
+            <div className="relative group">
+              <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+              <input
+                type="text"
+                placeholder="Search events, tickets..."
+                className="w-full pl-12 pr-4 py-2.5 rounded-full bg-secondary/50 border border-transparent focus:bg-background focus:border-primary/20 focus:ring-4 focus:ring-primary/10 text-sm text-foreground placeholder-muted-foreground transition-all duration-300 outline-none"
+              />
+            </div>
+          </div>
 
-          <div className="flex items-center gap-3 2xsm:gap-7">
+          <div className="flex items-center gap-3 2xsm:gap-7 ml-auto">
             <ul className="flex items-center gap-2 2xsm:gap-4">
-              {/* Shopping Cart with Badge */}
-              <Link to="/cart" className="relative">
-                <ShoppingCartIcon className="h-6 w-6 text-gray-700 dark:text-gray-300" />
+              {/* Notifications */}
+              <button className="relative p-2 rounded-full hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
+                <BellIcon className="h-6 w-6" />
+                <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-destructive ring-2 ring-background"></span>
+              </button>
+
+              {/* Shopping Cart */}
+              <Link to="/cart" className="relative p-2 rounded-full hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
+                <ShoppingCartIcon className="h-6 w-6" />
                 {totalQuantity > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-semibold w-5 h-5 rounded-full flex items-center justify-center">
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute top-1 right-1 bg-gradient-to-r from-destructive to-pink-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-sm"
+                  >
                     {totalQuantity}
-                  </span>
+                  </motion.span>
                 )}
               </Link>
+
+              <div className="h-8 w-px bg-border mx-1"></div>
 
               {/* Language Toggle */}
               <LanguageToggle />
@@ -116,59 +139,70 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
               <ThemeToggle />
 
               {/* User Dropdown */}
-              <div className="relative">
+              <div className="relative ml-2">
                 <button
                   ref={trigger}
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-gray-800 rounded-full"
+                  className="flex items-center gap-3 focus:outline-none group"
                 >
                   <span className="hidden text-right lg:block">
-                    <span className="block text-sm font-medium text-gray-800 dark:text-white">
+                    <span className="block text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
                       {user?.username || t('header.guest')}
                     </span>
-                    <span className="block text-xs text-gray-500 dark:text-gray-400">
+                    <span className="block text-xs font-medium text-muted-foreground">
                       {role}
                     </span>
                   </span>
-                  <span className="h-10 w-10 rounded-full bg-primary-500 text-white flex items-center justify-center font-semibold text-sm shadow-md shadow-primary-500/20">
-                    {user ? getInitials(user.username) : <UserCircleIcon className="h-8 w-8" />}
-                  </span>
+                  <div className="relative">
+                    <span className="h-11 w-11 rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center justify-center font-bold text-sm shadow-lg shadow-primary/10 group-hover:ring-4 group-hover:ring-primary/10 transition-all duration-300">
+                      {user ? getInitials(user.username) : <UserCircleIcon className="h-8 w-8" />}
+                    </span>
+                    <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 ring-2 ring-background"></span>
+                  </div>
                 </button>
 
-                {dropdownOpen && (
-                  <div
-                    ref={dropdown}
-                    className="absolute right-0 mt-2.5 flex w-64 flex-col rounded-xl border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-800 animate-in fade-in zoom-in-95 duration-200"
-                  >
-                    <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-                      <p className="font-semibold text-sm text-gray-800 dark:text-white truncate">
-                        {user?.username}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                        {user?.email}
-                      </p>
-                    </div>
-                    <ul className="flex flex-col p-2">
-                      <li>
-                        <Link
-                          to="/settings"
-                          onClick={() => setDropdownOpen(false)}
-                          className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 duration-200 ease-in-out hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
-                        >
-                          <Cog6ToothIcon className="h-5 w-5" />
-                          {t('menu.settings')}
-                        </Link>
-                      </li>
-                    </ul>
-                    <button
-                      onClick={handleLogoutClick}
-                      className="flex items-center gap-2.5 border-t border-gray-200 dark:border-gray-700 py-2 px-4 text-sm font-medium duration-200 ease-in-out hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 m-2 rounded-lg"
+                <AnimatePresence>
+                  {dropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      ref={dropdown}
+                      className="absolute right-0 mt-4 flex w-72 flex-col rounded-2xl border border-border bg-popover text-popover-foreground shadow-xl shadow-black/5 dark:shadow-black/20 overflow-hidden z-50"
                     >
-                      <ArrowRightOnRectangleIcon className="h-5 w-5" />
-                      {t('header.logout')}
-                    </button>
-                  </div>
-                )}
+                      <div className="px-6 py-5 border-b border-border bg-muted/30">
+                        <p className="font-bold text-base text-foreground truncate">
+                          {user?.username}
+                        </p>
+                        <p className="text-sm text-muted-foreground truncate mt-1">
+                          {user?.email}
+                        </p>
+                      </div>
+                      <ul className="flex flex-col p-2">
+                        <li>
+                          <Link
+                            to="/settings"
+                            onClick={() => setDropdownOpen(false)}
+                            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium duration-200 ease-in-out hover:bg-secondary text-foreground"
+                          >
+                            <Cog6ToothIcon className="h-5 w-5 text-muted-foreground" />
+                            {t('menu.settings')}
+                          </Link>
+                        </li>
+                      </ul>
+                      <div className="p-2 border-t border-border">
+                        <button
+                          onClick={handleLogoutClick}
+                          className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium duration-200 ease-in-out hover:bg-destructive/10 text-destructive"
+                        >
+                          <ArrowRightOnRectangleIcon className="h-5 w-5" />
+                          {t('header.logout')}
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </ul>
           </div>

@@ -4,25 +4,27 @@ import { ChartPieIcon, TicketIcon } from '@heroicons/react/24/solid';
 import { Events } from '@/types/events';
 
 export interface TopEvent extends Events {
-    ticketsSold: number;
+  ticketsSold: number;
 }
 
 const TopEventsCard: React.FC<{ events: TopEvent[]; title: string; }> = ({ events, title }) => {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{title}</h3>
+    <div className="bg-card rounded-2xl shadow-lg shadow-gray-200/50 dark:shadow-none p-6 border border-border">
+      <h3 className="text-xl font-bold text-card-foreground mb-4">{title}</h3>
       {events.length > 0 ? (
         <ul className="space-y-3">
           {events.map((event, index) => (
             <li key={event.id}>
-              <Link to={`/manage-events`} className="block hover:bg-gray-50 dark:hover:bg-gray-700/50 p-3 rounded-md -m-3 transition-colors">
+              <Link to={`/events`} className="group/item block hover:bg-muted/50 p-2.5 rounded-xl border border-transparent hover:border-border transition-all duration-200">
                 <div className="flex items-center gap-4">
-                  <div className="text-lg font-bold text-gray-400 dark:text-gray-500">{index + 1}</div>
-                  <div className="flex-grow overflow-hidden">
-                    <p className="font-semibold text-gray-800 dark:text-gray-200 truncate">{event.name}</p>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-sm font-bold text-muted-foreground group-hover/item:bg-card group-hover/item:text-primary transition-colors border border-transparent group-hover/item:border-border">
+                    {index + 1}
                   </div>
-                  <div className="flex items-center gap-1.5 text-sm font-bold text-primary-500 flex-shrink-0">
-                    <TicketIcon className="h-4 w-4" />
+                  <div className="flex-grow min-w-0">
+                    <p className="font-semibold text-card-foreground truncate group-hover/item:text-primary transition-colors">{event.name}</p>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 text-xs font-bold text-primary">
+                    <TicketIcon className="h-3.5 w-3.5" />
                     <span>{event.ticketsSold.toLocaleString()}</span>
                   </div>
                 </div>
@@ -32,8 +34,8 @@ const TopEventsCard: React.FC<{ events: TopEvent[]; title: string; }> = ({ event
         </ul>
       ) : (
         <div className="text-center py-8">
-            <ChartPieIcon className="mx-auto h-12 w-12 text-gray-400" />
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">No ticket sales data available yet.</p>
+          <ChartPieIcon className="mx-auto h-12 w-12 text-muted-foreground" />
+          <p className="mt-2 text-sm text-muted-foreground">No ticket sales data available yet.</p>
         </div>
       )}
     </div>

@@ -25,6 +25,7 @@ const OrdersPage = lazy(() => import('../features/orders/components/OrderManagem
 const TicketsPage = lazy(() => import('../features/tickets/components/TicketsPage'));
 const ResetPasswordPage = lazy(() => import('../features/auth/ResetPassword'));
 const ForgotPasswordPage = lazy(() => import('../features/auth/ForgotPassword'));
+const VerifyEmailPage = lazy(() => import('../features/auth/VerifyEmailPage'));
 const LandingPage = lazy(() => import('../features/landing/LandingPage'));
 const FeaturesPage = lazy(() => import('../features/static/FeaturesPage'));
 const PricingPage = lazy(() => import('../features/static/PricingPage'));
@@ -42,6 +43,7 @@ const AppRoutes: React.FC = () => {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
             <Route path="/" element={<LandingPage />} />
 
             <Route element={<PublicLayout />}>

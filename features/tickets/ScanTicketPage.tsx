@@ -9,7 +9,7 @@ const ScanTicketPage: React.FC = () => {
 
     const handleClose = () => {
         setIsModalOpen(false);
-        navigate('/'); 
+        navigate('/');
     };
 
     const handleTicketRedeemed = () => {
@@ -18,12 +18,12 @@ const ScanTicketPage: React.FC = () => {
     };
 
     return (
-        <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md text-center">
-            <QrCodeIcon className="mx-auto h-16 w-16 text-primary-500"/>
+        <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md text-center border border-gray-200 dark:border-gray-700">
+            <QrCodeIcon className="mx-auto h-16 w-16 text-primary-500" />
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mt-4">Ticket Scanner</h1>
             <p className="text-gray-600 dark:text-gray-400 mt-2">The scanner is active. To restart, close this modal and re-open this page.</p>
             {!isModalOpen && (
-                <button 
+                <button
                     onClick={() => setIsModalOpen(true)}
                     className="mt-6 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
                 >

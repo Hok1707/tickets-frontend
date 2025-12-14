@@ -55,7 +55,7 @@ const LoginPage: React.FC = () => {
         try {
             const { user, accessToken } = await authService.login(data.email, data.password);
             login(user, accessToken);
-            toast.success(`Welcome back, ${user.username}!`);
+            toast.success(`Welcome, ${user.username}!`);
             navigate('/dashboard');
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Login failed';

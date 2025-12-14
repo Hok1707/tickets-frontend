@@ -157,7 +157,7 @@ const EventModal: React.FC<EventModalProps> = ({ event, onClose, onSave }) => {
     } bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2`;
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50 p-4 overflow-y-auto">
+    <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-[100] p-4 overflow-y-auto">
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-3xl my-8 p-6 animate-fade-in relative">
         <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">
           {event?.id ? "✏️ Edit Event" : "🆕 Create Event"}
@@ -171,6 +171,7 @@ const EventModal: React.FC<EventModalProps> = ({ event, onClose, onSave }) => {
             </label>
             <input
               {...register("name")}
+              autoFocus
               placeholder="Enter event name"
               className={inputClass(errors.name)}
             />

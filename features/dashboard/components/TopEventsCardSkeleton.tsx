@@ -2,7 +2,7 @@ import React from 'react';
 
 const TopEventsCardSkeleton: React.FC<{ title: string }> = ({ title }) => {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 animate-pulse">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 animate-pulse">
       <div className="h-6 w-1/2 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
       <div className="space-y-4">
         {Array.from({ length: 5 }).map((_, index) => (

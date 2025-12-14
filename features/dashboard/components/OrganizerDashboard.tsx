@@ -136,13 +136,13 @@ const OrganizerDashboard: React.FC = () => {
               <FinancialCardSkeleton />
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6">
             <div className="h-6 w-40 bg-gray-200 dark:bg-gray-700 rounded mb-4 animate-pulse"></div>
             <div className="h-80 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
           </div>
         </main>
         <aside className="lg:col-span-1 space-y-8">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6">
             <div className="h-6 w-40 bg-gray-200 dark:bg-gray-700 rounded mb-4 animate-pulse"></div>
             <div className="space-y-3">
               {[1, 2, 3].map(i => (
@@ -160,10 +160,10 @@ const OrganizerDashboard: React.FC = () => {
       <main className="lg:col-span-2 space-y-8">
         {/* Header */}
         <section className="space-y-2">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground">
             {t('organizerDashboard.welcome')} {user.username.split(' ')[0]}! 👋
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 text-lg">
+          <p className="text-muted-foreground text-lg">
             {t('organizerDashboard.subtitle')}
           </p>
         </section>
@@ -171,36 +171,36 @@ const OrganizerDashboard: React.FC = () => {
         {/* Statistics Cards */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
-            icon={<CalendarDaysIcon className="h-6 w-6 text-blue-500" />}
+            icon={<CalendarDaysIcon className="h-6 w-6 text-gray-900 dark:text-blue-500" />}
             title={t('organizerDashboard.totalEvents')}
             value={myEvents.length.toLocaleString()}
           />
           <StatCard
-            icon={<TicketIcon className="h-6 w-6 text-green-500" />}
+            icon={<TicketIcon className="h-6 w-6 text-gray-900 dark:text-green-500" />}
             title={t('organizerDashboard.ticketsSold')}
             value={ticketsSold.toLocaleString()}
           />
           <StatCard
-            icon={<SparklesIcon className="h-6 w-6 text-purple-500" />}
+            icon={<SparklesIcon className="h-6 w-6 text-gray-900 dark:text-purple-500" />}
             title={t('organizerDashboard.published')}
             value={stats.publishedEvents.toLocaleString()}
           />
           <StatCard
-            icon={<UsersIcon className="h-6 w-6 text-orange-500" />}
+            icon={<UsersIcon className="h-6 w-6 text-gray-900 dark:text-orange-500" />}
             title={t('organizerDashboard.totalCapacity')}
             value={stats.totalCapacity.toLocaleString()}
           />
         </section>
 
         {/* Financial Overview */}
-        <section className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+        <section className="bg-card rounded-2xl shadow-lg shadow-gray-200/50 dark:shadow-none border border-border p-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
             <div>
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                <ChartBarIcon className="h-6 w-6 text-primary-500" />
+              <h2 className="text-xl font-semibold text-card-foreground flex items-center gap-2">
+                <ChartBarIcon className="h-6 w-6 text-foreground dark:text-primary-500" />
                 {t('organizerDashboard.financialOverview')}
               </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('organizerDashboard.financialSubtitle')}</p>
+              <p className="text-sm text-muted-foreground mt-1">{t('organizerDashboard.financialSubtitle')}</p>
             </div>
             <DateRangePicker startDate={dateRange.startDate} endDate={dateRange.endDate} onChange={setDateRange} />
           </div>
@@ -209,14 +209,14 @@ const OrganizerDashboard: React.FC = () => {
             <FinancialCard
               title={t('organizerDashboard.totalIncome')}
               value={financials?.totalIncome ?? 0}
-              icon={<ArrowTrendingUpIcon className="h-6 w-6 text-green-600 dark:text-green-400" />}
+              icon={<ArrowTrendingUpIcon className="h-6 w-6 text-gray-900 dark:text-green-400" />}
               colorClass="bg-green-100 dark:bg-green-900/50"
               change={financials?.incomeChange}
             />
             <FinancialCard
               title={t('organizerDashboard.totalExpenses')}
               value={financials?.totalExpenses ?? 0}
-              icon={<ArrowTrendingDownIcon className="h-6 w-6 text-red-600 dark:text-red-400" />}
+              icon={<ArrowTrendingDownIcon className="h-6 w-6 text-gray-900 dark:text-red-400" />}
               colorClass="bg-red-100 dark:bg-red-900/50"
               change={financials?.expensesChange}
               invertChangeColor
@@ -224,37 +224,37 @@ const OrganizerDashboard: React.FC = () => {
             <FinancialCard
               title={t('organizerDashboard.netProfit')}
               value={financials?.netProfit ?? 0}
-              icon={<BanknotesIcon className="h-6 w-6 text-blue-600 dark:text-blue-400" />}
+              icon={<BanknotesIcon className="h-6 w-6 text-gray-900 dark:text-blue-400" />}
               colorClass="bg-blue-100 dark:bg-blue-900/50"
               change={financials?.netProfitChange}
             />
             <FinancialCard
               title={t('organizerDashboard.estTaxes')}
               value={financials?.taxes ?? 0}
-              icon={<ReceiptPercentIcon className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />}
+              icon={<ReceiptPercentIcon className="h-6 w-6 text-gray-900 dark:text-yellow-400" />}
               colorClass="bg-yellow-100 dark:bg-yellow-900/50"
             />
           </div>
         </section>
 
         {/* Performance Chart */}
-        <section className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+        <section className="bg-card rounded-2xl shadow-lg shadow-gray-200/50 dark:shadow-none border border-border p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                <ChartBarIcon className="h-5 w-5 text-primary-500" />
+              <h3 className="text-lg font-semibold text-card-foreground flex items-center gap-2">
+                <ChartBarIcon className="h-5 w-5 text-foreground dark:text-primary-500" />
                 {t('organizerDashboard.performance')}
               </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('organizerDashboard.performanceSubtitle')}</p>
+              <p className="text-sm text-muted-foreground mt-1">{t('organizerDashboard.performanceSubtitle')}</p>
             </div>
           </div>
           {financials && financials.chartData.length > 0 ? (
             <FinancialChart data={financials.chartData} />
           ) : (
             <div className="text-center py-16">
-              <ChartBarIcon className="h-16 w-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-              <p className="text-gray-500 dark:text-gray-400 font-medium">{t('organizerDashboard.noFinancialData')}</p>
-              <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">{t('organizerDashboard.selectDateRange')}</p>
+              <ChartBarIcon className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <p className="text-card-foreground font-medium">{t('organizerDashboard.noFinancialData')}</p>
+              <p className="text-sm text-muted-foreground mt-1">{t('organizerDashboard.selectDateRange')}</p>
             </div>
           )}
         </section>
@@ -263,17 +263,17 @@ const OrganizerDashboard: React.FC = () => {
         <section>
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                <Cog6ToothIcon className="h-6 w-6 text-primary-500" />
+              <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
+                <Cog6ToothIcon className="h-6 w-6 text-foreground dark:text-primary-500" />
                 {t('organizerDashboard.quickActions')}
               </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('organizerDashboard.quickActionsSubtitle')}</p>
+              <p className="text-sm text-muted-foreground mt-1">{t('organizerDashboard.quickActionsSubtitle')}</p>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Link
               to="/manage-events"
-              className="bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex justify-between items-center group transform hover:-translate-y-0.5"
+              className="bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 flex justify-between items-center group transform hover:-translate-y-0.5"
             >
               <div>
                 <div className="flex items-center gap-2 mb-2">
@@ -286,7 +286,7 @@ const OrganizerDashboard: React.FC = () => {
             </Link>
             <Link
               to="/manage-events"
-              className="bg-gradient-to-br from-purple-500 to-purple-600 dark:from-purple-600 dark:to-purple-700 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex justify-between items-center group transform hover:-translate-y-0.5"
+              className="bg-gradient-to-br from-purple-500 to-purple-600 dark:from-purple-600 dark:to-purple-700 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 flex justify-between items-center group transform hover:-translate-y-0.5"
             >
               <div>
                 <div className="flex items-center gap-2 mb-2">
@@ -299,7 +299,7 @@ const OrganizerDashboard: React.FC = () => {
             </Link>
             <Link
               to="/scan"
-              className="bg-gradient-to-br from-green-500 to-green-600 dark:from-green-600 dark:to-green-700 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex justify-between items-center md:col-span-2 group transform hover:-translate-y-0.5"
+              className="bg-gradient-to-br from-green-500 to-green-600 dark:from-green-600 dark:to-green-700 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 flex justify-between items-center md:col-span-2 group transform hover:-translate-y-0.5"
             >
               <div className="flex items-center gap-4">
                 <div className="bg-white/20 p-3 rounded-lg">
@@ -317,29 +317,29 @@ const OrganizerDashboard: React.FC = () => {
 
         {/* Event Status Summary */}
         {myEvents.length > 0 && (
-          <section className="bg-gradient-to-r from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 border border-primary-200 dark:border-primary-700 rounded-xl p-6">
+          <section className="bg-gradient-to-r from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 border border-primary-200 dark:border-primary-700 rounded-2xl p-6">
             <div className="flex items-start gap-4">
-              <div className="bg-primary-500 p-3 rounded-lg">
+              <div className="bg-primary-500 p-3 rounded-xl">
                 <CalendarDaysIcon className="h-6 w-6 text-white" />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-3">{t('organizerDashboard.eventStatusSummary')}</h3>
+                <h3 className="font-semibold text-foreground mb-3">{t('organizerDashboard.eventStatusSummary')}</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-white dark:bg-gray-800 rounded-lg p-3 text-center">
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.publishedEvents}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{t('organizerDashboard.published')}</p>
+                  <div className="bg-card rounded-xl p-3 text-center shadow-sm">
+                    <p className="text-2xl font-bold text-foreground">{stats.publishedEvents}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{t('organizerDashboard.published')}</p>
                   </div>
-                  <div className="bg-white dark:bg-gray-800 rounded-lg p-3 text-center">
+                  <div className="bg-card rounded-xl p-3 text-center shadow-sm">
                     <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.draftEvents}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{t('organizerDashboard.draft')}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{t('organizerDashboard.draft')}</p>
                   </div>
-                  <div className="bg-white dark:bg-gray-800 rounded-lg p-3 text-center">
-                    <p className="text-2xl font-bold text-gray-600 dark:text-gray-400">{stats.completedEvents}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{t('organizerDashboard.completed')}</p>
+                  <div className="bg-card rounded-xl p-3 text-center shadow-sm">
+                    <p className="text-2xl font-bold text-muted-foreground">{stats.completedEvents}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{t('organizerDashboard.completed')}</p>
                   </div>
-                  <div className="bg-white dark:bg-gray-800 rounded-lg p-3 text-center">
+                  <div className="bg-card rounded-xl p-3 text-center shadow-sm">
                     <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{myEvents.length}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{t('organizerDashboard.total')}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{t('organizerDashboard.total')}</p>
                   </div>
                 </div>
               </div>

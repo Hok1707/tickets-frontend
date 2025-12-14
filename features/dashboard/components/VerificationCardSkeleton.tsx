@@ -2,7 +2,7 @@ import React from 'react';
 
 const VerificationCardSkeleton: React.FC = () => {
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 animate-pulse">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 animate-pulse">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div className="space-y-2">
                     <div className="h-5 w-40 bg-gray-200 dark:bg-gray-700 rounded"></div>

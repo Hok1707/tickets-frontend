@@ -90,10 +90,16 @@ export const authService = {
     });
     return res.data;
   },
-    resetPassword: async (token: string, newPassword: string) => {
+  resetPassword: async (token: string, newPassword: string) => {
     const res = await axios.post(`${API_ENDPOINTS.RESET_PASSWORD}`, {
       token,
       newPassword,
+    });
+    return res.data;
+  },
+  verifyEmail: async (verifyToken: string) => {
+    const res = await axios.post(`${API_ENDPOINTS.VERIFY_EMAIL}`, {
+      verifyToken,
     });
     return res.data;
   },

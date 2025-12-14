@@ -21,30 +21,30 @@ function App() {
     }
   }, [theme]);
 
-useEffect(() => {
-  const tryRefresh = async () => {
-    const auth = useAuthStore.getState();
-    const { refreshToken, token, setToken, logout } = auth;
+  useEffect(() => {
+    const tryRefresh = async () => {
+      const auth = useAuthStore.getState();
+      const { refreshToken, token, setToken, logout } = auth;
 
-    if (!refreshToken || token) return;
+      if (!refreshToken || token) return;
 
-    try {
-      const res = await apiClient.post(API_ENDPOINTS.REFRESH_TOKEN, {
-        refreshToken,
-      });
+      try {
+        const res = await apiClient.post(API_ENDPOINTS.REFRESH_TOKEN, {
+          refreshToken,
+        });
 
-      setToken(res.data.accessToken, res.data.refreshToken);
+        setToken(res.data.accessToken, res.data.refreshToken);
 
-    } catch (err) {
-      logout();
-      console.warn("Refresh failed on startup");
-    }
-  };
+      } catch (err) {
+        logout();
+        console.warn("Refresh failed on startup");
+      }
+    };
 
-  tryRefresh();
-}, []);
+    tryRefresh();
+  }, []);
 
-  
+
   return (
     <BrowserRouter>
       <Suspense fallback={<FullScreenLoader />}>

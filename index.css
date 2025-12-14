@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 @theme {
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
@@ -36,7 +37,9 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
+    /* Pure white background */
     --foreground: 240 10% 3.9%;
+    /* Deep zinc-black for text */
 
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
@@ -44,56 +47,66 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
 
-    --primary: 262.1 83.3% 57.8%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 267 84% 56%;
+    /* Keep brand Violet */
+    --primary-foreground: 0 0% 98%;
 
     --secondary: 240 4.8% 95.9%;
+    /* Light zinc gray for secondary backgrounds */
     --secondary-foreground: 240 5.9% 10%;
 
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
+    /* Readable muted text */
 
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --accent: 267 84% 96%;
+    /* Very light violet accent for hovers */
+    --accent-foreground: 267 84% 56%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 240 5.9% 90%;
+    /* Subtle clean border */
     --input: 240 5.9% 90%;
-    --ring: 262.1 83.3% 57.8%;
+    --ring: 267 84% 56%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    --background: 240 5% 5%;
+    /* More neutral dark background */
+    --foreground: 210 40% 98%;
 
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
+    --card: 240 5% 8%;
+    /* Distinct card */
+    --card-foreground: 210 40% 98%;
 
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 240 5% 8%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 263.4 70% 50.4%;
+    --primary: 267 90% 64%;
+    /* Lighter/brighter primary for contrast */
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 240 5% 12%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 240 5% 12%;
+    --muted-foreground: 240 5% 70%;
+    /* Lighter text for readability */
 
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 267 90% 15%;
+    --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --border: 240 5% 16%;
+    /* Visible clean border */
+    --input: 240 5% 16%;
+    --ring: 267 90% 64%;
   }
 
   * {
@@ -101,7 +114,8 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary;
+    font-family: 'Inter', sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
